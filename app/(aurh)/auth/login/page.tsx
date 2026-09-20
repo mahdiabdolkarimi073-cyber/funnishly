@@ -1,6 +1,6 @@
 "use client"
 import loginActions from "@/backend/actions/auth/login.action";
-import {TextInput, Button, Paper, Title, Stack, PasswordInput, NumberInput} from "@mantine/core";
+import {TextInput, Button, Paper, Title, Stack, PasswordInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -15,7 +15,7 @@ export default function LoginForm() {
 
     const router = useRouter();
 
-    const searchParams = useSearchParams()
+    const searchParams = useSearchParams();
 
 
     const form = useForm<FormValues>({
@@ -24,6 +24,7 @@ export default function LoginForm() {
             password: "",
         },
         validate: {
+            phone: (v) => (/^0\d{10}$/.test(v.trim()) ? null : "شماره موبایل باید ۱۱ رقم و با ۰ شروع شود"),
             password: (v) => (v.trim().length < 8 ? "رمز عبور باید حداقل ۸ کاراکتر باشد" : null),
         },
     });
@@ -40,18 +41,20 @@ export default function LoginForm() {
     };
 
     return (
-        <div className="w-full min-h-screen flex justify-center items-center">
-            <div className="h-[550px] flex rounded-lg overflow-hidden">
+        <div className="w-full min-h-screen flex justify-center items-center p-4">
+            <div className="w-full max-w-[820px] flex flex-col md:flex-row rounded-lg overflow-hidden shadow-lg">
 
-                <Paper withBorder shadow="md" p="xl" radius="md" w={360}>
+                <Paper withBorder shadow="md" p="xl" radius="md" className="w-full md:w-[360px] mx-auto">
                     <Title order={3} mb="lg" ta="center">
                         ورود
                     </Title>
                     <form onSubmit={form.onSubmit(handleSubmit)}>
                         <Stack>
-                            <NumberInput
+                            <TextInput
                                 label="شماره موبایل"
                                 placeholder="09xxxxxxxxx"
+                                inputMode="tel"
+                                dir="ltr"
                                 {...form.getInputProps("phone")}
                             />
                             <PasswordInput
@@ -70,8 +73,8 @@ export default function LoginForm() {
                         کنید</Link></p>
 
                 </Paper>
-                <div>
-                    <img className="h-full" src="/images/auth/banner.png" alt=""/>
+                <div className="hidden md:block md:w-[460px]">
+                    <img className="h-full w-full object-cover" src="/images/auth/banner.png" alt=""/>
                 </div>
             </div>
         </div>

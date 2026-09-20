@@ -36,11 +36,11 @@ export default async function ProformaPage({ params }: { params: Promise<{ id: s
 
 
     return (
-        <div className="min-h-screen bg-gray-100 flex w-full items-center justify-center p-6" dir="rtl">
-            <div className="w-full flex  gap-4">
+        <div className="min-h-screen bg-gray-100 flex w-full items-center justify-center p-4 md:p-6" dir="rtl">
+            <div className="w-full max-w-5xl flex flex-col lg:flex-row gap-4">
 
                 {/* Right Side — اطلاعات — ۳/۴ */}
-                <div className="w-3/4 bg-white rounded-lg p-4">
+                <div className="w-full lg:w-3/4 bg-white rounded-lg p-4">
                     <Title order={3} mb="xs">پیش‌فاکتور</Title>
                     <Text size="sm" c="dimmed" mb="lg">لطفاً اطلاعات زیر را پیش از پرداخت بررسی کنید</Text>
 
@@ -49,7 +49,7 @@ export default async function ProformaPage({ params }: { params: Promise<{ id: s
                     {/* User Info */}
                     <div className="mb-6">
                         <Text fw={600} size="sm" c="dimmed" mb="sm">اطلاعات خریدار</Text>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="bg-gray-50 rounded-lg p-3">
                                 <Text size="xs" c="dimmed" mb={2}>نام و نام خانوادگی</Text>
                                 <Text fw={500}>{user?.name} {user?.last_name}</Text>
@@ -98,7 +98,7 @@ export default async function ProformaPage({ params }: { params: Promise<{ id: s
                 </div>
 
                 {/* Left Side — پرداخت — ۱/۴ */}
-                <div className="w-[300px] p-4 bg-white rounded-lg flex flex-col justify-between">
+                <div className="w-full lg:w-[300px] p-4 bg-white rounded-lg flex flex-col justify-between">
                     <div>
                         <Title order={5} mb="xs">خلاصه پرداخت</Title>
                         <Divider mb="md" />

@@ -193,7 +193,7 @@ export default function SpinWheel() {
             </div>
 
             {/* Wheel */}
-            <div style={{ position: "relative" }}>
+            <div style={{ position: "relative", width: "min(400px, 80vw)", height: "min(400px, 80vw)" }}>
                 {/* Pointer - on the right side */}
                 <div style={{
                     position: "absolute", top: "50%", right: -18, transform: "translateY(-50%)",
@@ -201,8 +201,9 @@ export default function SpinWheel() {
                     borderRight: "24px solid #f1c40f", zIndex: 10,
                 }} />
                 <svg
-                    width={400} height={400}
+                    viewBox="0 0 400 400"
                     style={{
+                        width: "100%", height: "100%",
                         transform: `rotate(${rotation}deg)`,
                         transition: spinning ? "transform 4s cubic-bezier(0.17,0.67,0.12,1)" : "none",
                         borderRadius: "50%", boxShadow: "0 0 40px rgba(0,0,0,0.5)",

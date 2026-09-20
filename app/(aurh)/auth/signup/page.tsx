@@ -1,10 +1,9 @@
 "use client"
 import { registerUser } from "@/backend/actions/auth/signup.action";
-import { TextInput, Button, Paper, Title, Stack, NumberInput, PasswordInput } from "@mantine/core";
+import { TextInput, Button, Paper, Title, Stack, PasswordInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 interface FormValues {
@@ -16,6 +15,8 @@ interface FormValues {
 
 export default function RegistrationForm() {
 
+    const router = useRouter();
+
     const form = useForm<FormValues>({
         initialValues: {
             name: "",
@@ -26,30 +27,27 @@ export default function RegistrationForm() {
         validate: {
             name: (v) => (v.trim().length < 2 ? "نام باید حداقل ۲ کاراکتر باشد" : null),
             last_name: (v) => (v.trim().length < 2 ? "نام خانوادگی باید حداقل ۲ کاراکتر باشد" : null),
+            phone: (v) => (/^0\d{10}$/.test(v.trim()) ? null : "شماره موبایل باید ۱۱ رقم و با ۰ شروع شود"),
             password: (v) => (v.trim().length < 8 ? "رمز عبور باید حداقل ۸ کاراکتر باشد" : null),
-
         },
     });
 
     const handleSubmit = async (values: FormValues) => {
-        console.log("Values :"  ,values);
-        
         const res = await registerUser(values)
-        
+
         if (!res.ok) {
             toast.error(res.message)
             return
         }
 
-        return redirect("/dashboard")
-
+        router.push("/dashboard")
     };
 
     return (
-        <div className="w-full  min-h-screen flex justify-center items-center">
-            <div className="h-[550px] flex rounded-lg overflow-hidden">
+        <div className="w-full min-h-screen flex justify-center items-center p-4">
+            <div className="w-full max-w-[820px] flex flex-col md:flex-row rounded-lg overflow-hidden shadow-lg">
 
-                <Paper withBorder shadow="md" p="xl" radius="md" w={360}>
+                <Paper withBorder shadow="md" p="xl" radius="md" className="w-full md:w-[360px] mx-auto">
                     <Title order={3} mb="lg" ta="center">
                         ثبت‌نام
                     </Title>
@@ -65,9 +63,11 @@ export default function RegistrationForm() {
                                 placeholder="نام خانوادگی خود را وارد کنید"
                                 {...form.getInputProps("last_name")}
                             />
-                            <NumberInput
+                            <TextInput
                                 label="شماره موبایل"
                                 placeholder="09xxxxxxxxx"
+                                inputMode="tel"
+                                dir="ltr"
                                 {...form.getInputProps("phone")}
                             />
                             <PasswordInput
@@ -82,11 +82,11 @@ export default function RegistrationForm() {
                         </Stack>
                     </form>
 
-                    <p className="mt-6 text-sm">حساب کاربری دارید ؟ <Link className="text-sky-600  " href={"/auth/login"}>وارد شوید</Link></p>
+                    <p className="mt-6 text-sm">حساب کاربری دارید ؟ <Link className="text-sky-600" href={"/auth/login"}>وارد شوید</Link></p>
 
                 </Paper>
-                <div>
-                    <img className="h-full" src="/images/auth/banner.png" alt="" />
+                <div className="hidden md:block md:w-[460px]">
+                    <img className="h-full w-full object-cover" src="/images/auth/banner.png" alt="" />
                 </div>
             </div>
 

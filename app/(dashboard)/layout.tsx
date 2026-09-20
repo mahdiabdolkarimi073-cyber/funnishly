@@ -8,7 +8,8 @@ import { getUserByToken } from "@/backend/utils/getIser";
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
     const token = (await cookies()).get("token")?.value
-    const user = await getUserByToken(token!)
+    if (!token) return redirect("/")
+    const user = await getUserByToken(token)
     if (!user) return redirect("/")
     return (
         <div>

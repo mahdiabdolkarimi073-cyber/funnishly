@@ -100,7 +100,7 @@ export default function WordMatch() {
             {won && <div className="text-2xl font-bold text-emerald-400 animate-bounce">🎉 Congratulations! All pairs matched!</div>}
 
             {leftCol.length > 0 && (
-                <div className="flex gap-12 items-start">
+                <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 items-center sm:items-start">
                     {/* Left column - 5 items */}
                     <div className="flex flex-col gap-3">
                         {leftCol.map(word => (

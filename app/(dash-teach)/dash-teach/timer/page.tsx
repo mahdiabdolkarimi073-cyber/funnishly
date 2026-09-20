@@ -59,7 +59,7 @@ export default function Timer() {
         }}>
             {/* Display */}
             <div style={{
-                fontSize: 72, fontWeight: "bold", letterSpacing: 8,
+                fontSize: "clamp(2.5rem, 12vw, 4.5rem)", fontWeight: "bold", letterSpacing: 8,
                 color: isCountdownDone ? "#e74c3c" : countdown !== null ? "#f1c40f" : "#3498db",
                 textShadow: `0 0 30px ${isCountdownDone ? "#e74c3c" : countdown !== null ? "#f1c40f" : "#3498db"}55`,
                 transition: "color 0.3s",

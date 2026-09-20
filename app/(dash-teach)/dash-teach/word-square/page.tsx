@@ -146,10 +146,9 @@ export default function WordSquare() {
 
                     {/* Dynamic Grid - LTR */}
                     <div 
-                        className="grid gap-1 p-2 bg-gray-900 rounded-2xl border-2 border-gray-700"
+                        className="grid gap-1 p-2 bg-gray-900 rounded-2xl border-2 border-gray-700 w-full max-w-[90vw] sm:max-w-xs"
                         style={{ 
                             gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-                            width: `${gridSize * 4 + 2}rem`,
                             direction: "ltr"
                         }}
                     >
@@ -162,13 +161,12 @@ export default function WordSquare() {
                                     draggable={!!cell && !hints[r][c]}
                                     onDragStart={() => cell && !hints[r][c] && setDragging({ from: "grid", row: r, col: c })}
                                     onDragEnd={() => setDragging(null)}
-                                    className={`aspect-square flex items-center justify-center text-xl font-bold rounded-xl border-2 transition-all
+                                    className={`aspect-square w-full flex items-center justify-center text-lg sm:text-xl font-bold rounded-xl border-2 transition-all
                                         ${completed[r] ? "bg-emerald-600 border-emerald-400" :
                                         hints[r][c] ? "bg-amber-800 border-amber-600 cursor-default" :
                                         cell ? "bg-gray-700 border-gray-500 cursor-grab" :
                                         "bg-gray-900 border-gray-700 border-dashed"}`}
                                     style={{ 
-                                        width: `${Math.max(48, 64 / gridSize * 2)}px`,
                                         direction: "ltr"
                                     }}
                                 >

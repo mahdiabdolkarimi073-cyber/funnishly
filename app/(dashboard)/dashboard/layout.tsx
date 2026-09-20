@@ -2,7 +2,7 @@
 import logoutAction from "@/backend/actions/auth/logout.action";
 import {closeAllModals, modals} from "@mantine/modals";
 import {ReactNode, useEffect, useState} from "react";
-import {MdDashboard, MdLogout, MdWorkspacePremium, MdSecurity} from "react-icons/md";
+import {MdDashboard, MdLogout, MdWorkspacePremium, MdSecurity, MdMenu, MdClose} from "react-icons/md";
 import {Popover, Button, Stack, Text} from '@mantine/core';
 import {FaChalkboardTeacher, FaUser} from "react-icons/fa";
 import {useRouter} from "next/navigation";
@@ -24,6 +24,7 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
 
     const router = useRouter();
     const [activePage, setActivePage] = useState<string>("dashboard");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const {data: user, status, refetch} = useServerAction(getUserFromCookieWithAllData)
 
     useEffect(() => {
@@ -58,11 +59,38 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
 
     ].filter(Boolean);
 
+    const handleNavigate = (id: string) => {
+        setActivePage(id);
+        setSidebarOpen(false);
+    };
+
     return (
         <div className="flex bg-sky-50 min-h-[calc(100dvh-79px)]" dir="rtl">
 
+            {/* Mobile sidebar toggle */}
+            <button
+                className="md:hidden fixed top-[80px] right-4 z-40 flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-sky-200 text-sky-700 shadow-md"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                aria-label="منو"
+            >
+                {sidebarOpen ? <MdClose size={22}/> : <MdMenu size={22}/>}
+            </button>
+
+            {/* Overlay for mobile */}
+            {sidebarOpen && (
+                <div
+                    className="md:hidden fixed inset-0 bg-black/30 z-30"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-72 bg-white flex flex-col justify-between border-l border-sky-100 shadow-sm">
+            <aside className={`
+                w-72 bg-white flex flex-col justify-between border-l border-sky-100 shadow-sm
+                fixed md:static inset-y-0 right-0 top-0 z-30 md:z-auto
+                transform transition-transform duration-300
+                ${sidebarOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
+            `}>
 
                 {/* Logo */}
                 <div>
@@ -85,7 +113,7 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
                         {menuItems.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => setActivePage(item.id)}
+                                onClick={() => handleNavigate(item.id)}
                                 className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 w-full text-right
                                     ${activePage === item.id
                                     ? "bg-sky-50 text-sky-700"
@@ -148,14 +176,14 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto">
-                <div className="px-6 py-4 border-b border-sky-100 flex items-center justify-between bg-white">
-                    <span className="font-semibold text-lg text-sky-800">
+            <main className="flex-1 overflow-y-auto w-full">
+                <div className="px-4 md:px-6 py-4 border-b border-sky-100 flex items-center justify-between bg-white">
+                    <span className="font-semibold text-base md:text-lg text-sky-800">
                         {menuItems.find((m) => m.id === activePage)?.label}
                     </span>
 
                     <div className="flex items-center gap-3">
-                        <Text size="sm" c="dimmed">
+                        <Text size="sm" c="dimmed" className="hidden sm:block">
                             {new Date().toLocaleDateString("fa-IR", {
                                 weekday: "long",
                                 year: "numeric",
@@ -179,7 +207,7 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
                                             fullWidth
                                             justify="start"
                                             leftSection={item.icon}
-                                            onClick={() => setActivePage(item.id)}
+                                            onClick={() => handleNavigate(item.id)}
                                         >
                                             {item.label}
                                         </Button>
@@ -201,7 +229,7 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
                     </div>
                 </div>
 
-                <div className="p-8">
+                <div className="p-4 md:p-8">
                     {children}
                 </div>
             </main>
