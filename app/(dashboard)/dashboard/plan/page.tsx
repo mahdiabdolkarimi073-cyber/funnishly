@@ -2,7 +2,19 @@ import React from 'react';
 import {Button} from "@mantine/core";
 
 import getUserPackages from "@/backend/actions/user/getPackage.action";
+import {PackageDuration} from "@prisma/client";
 
+const DURATION_PRICES: Record<PackageDuration, "price1m" | "price3m" | "price6m"> = {
+    MONTH1: "price1m",
+    MONTH3: "price3m",
+    MONTH6: "price6m",
+};
+
+const DURATION_LABELS: Record<PackageDuration, string> = {
+    MONTH1: "۱ ماهه",
+    MONTH3: "۳ ماهه",
+    MONTH6: "۶ ماهه",
+};
 
 const ActivePlanCard = async () => {
 
@@ -15,6 +27,10 @@ const ActivePlanCard = async () => {
         </div>
     )
 
+    const duration = pkg?.duration ?? "MONTH1";
+    const priceField = DURATION_PRICES[duration as PackageDuration];
+    const price = plan[priceField];
+
     return (
         <div className="mx-auto bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden p-6">
             {/* هدر پلن */}
@@ -22,6 +38,7 @@ const ActivePlanCard = async () => {
                 <div>
                     <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">پلن فعلی شما</h2>
                     <h1 className="text-2xl font-bold text-gray-900 mt-1">{plan.title}</h1>
+                    <p className="text-sm text-gray-500 mt-1">{plan.description}</p>
                 </div>
                 <div className={"flex gap-2 items-center"}>
                     <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
@@ -38,8 +55,9 @@ const ActivePlanCard = async () => {
 
             {/* قیمت */}
             <div className="mb-6">
-                <span className="text-4xl font-extrabold text-gray-900">{plan?.price?.toLocaleString()}</span>
-                <span className="text-gray-500 ml-1">تومان / ماه</span>
+                <span className="text-4xl font-extrabold text-gray-900">{price?.toLocaleString("fa")}</span>
+                <span className="text-gray-500 ml-1">تومان</span>
+                <span className="text-gray-400 text-sm mr-2">({DURATION_LABELS[duration as PackageDuration]})</span>
             </div>
 
             {/* لیست امکانات */}

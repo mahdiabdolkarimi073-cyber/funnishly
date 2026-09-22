@@ -2,8 +2,7 @@ import Header from "@/components/theme/Header";
 import Link from "next/link";
 import prisma from "@/backend/module/Prisma"
 import { cookies } from "next/headers";
-import { Button } from "@mantine/core";
-import { redirect } from "next/navigation";
+
 import Logo from "@/components/logo/Logo";
 
 export default async function HomePage() {
@@ -277,63 +276,60 @@ export default async function HomePage() {
                         <h2 className="text-2xl font-black tracking-tight text-slate-900">
                             پکیج‌ها
                         </h2>
+                        <p className="text-slate-600">پکیج مناسب خود را انتخاب کنید</p>
                     </div>
 
-                    <div className="grid gap-5 lg:grid-cols-3">
+                    <div className="grid gap-6 lg:grid-cols-2">
                         {(await prisma.package.findMany()).map((item) => {
-
-                            const { title, id, options, price } = item
+                            const { title, id, options, description, price1m, price3m, price6m } = item
+                            const durations = [
+                                { label: "۱ ماهه", price: price1m },
+                                { label: "۳ ماهه", price: price3m },
+                                { label: "۶ ماهه", price: price6m },
+                            ]
 
                             return (
                                 <div
                                     key={item.id}
-                                    className="relative overflow-hidden rounded-[1.75rem] flex flex-col justify-between border border-sky-100 bg-white p-6 shadow-lg shadow-sky-100">
+                                    className="relative overflow-hidden rounded-[1.75rem] flex flex-col border border-sky-100 bg-white p-6 shadow-lg shadow-sky-100">
 
-                                    <div>
-                                        <div
-                                            className="mb-4 inline-flex rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700">
+                                    <div className="mb-4">
+                                        <div className="mb-2 inline-flex rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700">
                                             {title}
                                         </div>
-                                        <h3 className="text-xl font-black text-slate-900">پکیج ۱</h3>
-                                        <div className="mt-3 flex items-end gap-2">
-                                            <span className="text-4xl font-black tracking-tight text-blue-800">
-                                                {price.toLocaleString("fa")}
-                                            </span>
-                                            <span className="pb-1 text-sm font-semibold text-slate-500">
-                                                ریال / ماه
-                                            </span>
-                                        </div>
-
-                                        <ul className="mt-6 space-y-3">
-                                            {options.map((benefit) => (
-                                                <li key={benefit} className="flex items-start gap-3 text-slate-700">
-                                                    <span
-                                                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-sky-200 bg-sky-50 text-sm font-bold text-sky-700">
-                                                        ✓
-                                                    </span>
-                                                    <span className="leading-7">{benefit}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <p className="text-sm text-slate-500 leading-7">{description}</p>
                                     </div>
 
+                                    <ul className="mb-6 space-y-3">
+                                        {options.map((benefit) => (
+                                            <li key={benefit} className="flex items-start gap-3 text-slate-700">
+                                                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-sky-200 bg-sky-50 text-sm font-bold text-sky-700">
+                                                    ✓
+                                                </span>
+                                                <span className="leading-7">{benefit}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
 
-
-                                    <Button
-                                        onClick={async () => {
-                                            "use server"
-                                            redirect(user ? `/payment/${item.id}` : `/auth/login?redirect=/payment/id=${item.id}`)
-                                        }}
-                                        variant={"outline"}
-                                        fullWidth
-                                        className={"mt-4"}
-                                    >
-                                        انتخاب پکیج
-                                    </Button>
+                                    {/* Duration options */}
+                                    <div className="grid grid-cols-3 gap-3 mb-6">
+                                        {durations.map((d) => (
+                                            <a
+                                                key={d.label}
+                                                href={user ? `/payment/${item.id}?duration=${d.label}` : `/auth/login?redirect=/payment/${item.id}`}
+                                                className="flex flex-col items-center gap-1 rounded-2xl border-2 border-sky-100 bg-sky-50/50 p-4 transition hover:border-sky-400 hover:bg-sky-50 cursor-pointer"
+                                            >
+                                                <span className="text-xs font-medium text-slate-500">{d.label}</span>
+                                                <span className="text-lg font-black text-blue-800">
+                                                    {d.price.toLocaleString("fa")}
+                                                </span>
+                                                <span className="text-xs text-slate-400">تومان</span>
+                                            </a>
+                                        ))}
+                                    </div>
                                 </div>
                             )
                         })}
-
                     </div>
                 </div>
             </section>

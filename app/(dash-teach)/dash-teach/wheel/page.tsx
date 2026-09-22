@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { FiRotateCcw, FiPlus, FiX, FiFolder, FiTrash2 } from "react-icons/fi";
+import { loadGameData, saveGameData } from "@/backend/actions/game/gameData.action";
 
 const COLORS = [
     "#e74c3c", "#e67e22", "#f1c40f", "#2ecc71",
@@ -38,22 +39,19 @@ export default function SpinWheel() {
     const [savedSets, setSavedSets] = useState<SavedSet[]>([]);
     const [showSavedSets, setShowSavedSets] = useState(false);
 
-    // Load saved sets from localStorage
+    // Load saved sets from database
     useEffect(() => {
-        const saved = localStorage.getItem("spinWheelSets");
-        if (saved) {
-            try {
-                setSavedSets(JSON.parse(saved));
-            } catch (e) {
-                console.error("Error loading saved sets:", e);
+        loadGameData("WHEEL").then((data) => {
+            if (data && data.sets) {
+                setSavedSets(data.sets);
             }
-        }
+        });
     }, []);
 
-    // Save to localStorage
+    // Save to database
     const saveSets = (sets: SavedSet[]) => {
         setSavedSets(sets);
-        localStorage.setItem("spinWheelSets", JSON.stringify(sets));
+        saveGameData("WHEEL", { sets });
     };
 
     const addItem = () => {

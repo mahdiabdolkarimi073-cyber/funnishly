@@ -6,14 +6,15 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import packagePayment from "@/backend/actions/package/packagePayment.action";
+import { PackageDuration } from "@prisma/client";
 
-export default function PayButton({ packageId }: { packageId: string }) {
+export default function PayButton({ packageId, duration }: { packageId: string; duration: PackageDuration }) {
     const router = useRouter();
     const [pending, startTransition] = useTransition();
 
     const handlePayment = () => {
         startTransition(async () => {
-            const { ok, message } = await packagePayment({ packageId });
+            const { ok, message } = await packagePayment({ packageId, duration });
 
             if (!ok) {
                 toast.error(message);

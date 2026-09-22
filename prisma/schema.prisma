@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -13,28 +14,43 @@ model User {
   phone         String       @unique
   token         String       @unique @default(uuid())
   password      String
+  role          UserRole     @default(USER)
   activePackage UserPackage?
-  transactions Transaction[]
+  transactions  Transaction[]
+  gameData      GameData[]
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
 
 model Package {
-  id        String          @id @default(uuid())
-  title     String
-  price     Int
-  options   String[]
-  purchases UserPackage[]
+  id          String          @id @default(uuid())
+  title       String
+  description String
+  price1m     Int
+  price3m     Int
+  price6m     Int
+  options     String[]
+  purchases   UserPackage[]
   transactions Transaction[]
 }
-
-
 
 model UserPackage {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id])
-  userId    String   @unique // ← unique = فقط یک پکیج فعال
+  userId    String   @unique
   package   Package  @relation(fields: [packageId], references: [id])
   packageId String
+  duration  PackageDuration @default(MONTH1)
   createdAt DateTime @default(now())
+}
+
+enum PackageDuration {
+  MONTH1
+  MONTH3
+  MONTH6
 }
 
 model Transaction {
@@ -45,7 +61,7 @@ model Transaction {
   packageId   String
   amount      Int
   status      TransactionStatus @default(PENDING)
-  refId       String?           // شناسه پرداخت از درگاه
+  refId       String?
   createdAt   DateTime          @default(now())
 }
 
@@ -53,4 +69,24 @@ enum TransactionStatus {
   PENDING
   SUCCESS
   FAILED
+}
+
+model GameData {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  gameType  GameType
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, gameType])
+}
+
+enum GameType {
+  WHEEL
+  QUIZ
+  SENTENCE_SCRAMBLE
+  WORD_MATCH
+  WORD_SQUARE
 }

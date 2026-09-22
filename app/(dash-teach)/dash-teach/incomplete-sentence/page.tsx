@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FiPlus, FiX, FiFolder, FiTrash2 } from "react-icons/fi";
+import { loadGameData, saveGameData } from "@/backend/actions/game/gameData.action";
 
 interface SavedSet {
     id: string;
@@ -9,7 +10,6 @@ interface SavedSet {
     createdAt: number;
 }
 
-const KEY = "sentence_scramble_sets";
 function shuffle<T>(arr: T[]): T[] { return [...arr].sort(() => Math.random() - 0.5) }
 
 export default function SentenceScramble() {
@@ -33,19 +33,16 @@ export default function SentenceScramble() {
     const [showSavedSets, setShowSavedSets] = useState(false);
 
     useEffect(() => {
-        const saved = localStorage.getItem(KEY);
-        if (saved) {
-            try {
-                setSavedSets(JSON.parse(saved));
-            } catch (e) {
-                console.error("Error loading saved sets:", e);
+        loadGameData("SENTENCE_SCRAMBLE").then((data) => {
+            if (data && data.sets) {
+                setSavedSets(data.sets);
             }
-        }
+        });
     }, []);
 
     const saveSets = (sets: SavedSet[]) => {
         setSavedSets(sets);
-        localStorage.setItem(KEY, JSON.stringify(sets));
+        saveGameData("SENTENCE_SCRAMBLE", { sets });
     };
 
     const openModal = () => {

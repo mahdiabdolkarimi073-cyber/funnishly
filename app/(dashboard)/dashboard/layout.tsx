@@ -2,7 +2,7 @@
 import logoutAction from "@/backend/actions/auth/logout.action";
 import {closeAllModals, modals} from "@mantine/modals";
 import {ReactNode, useEffect, useState} from "react";
-import {MdDashboard, MdLogout, MdWorkspacePremium, MdSecurity, MdMenu, MdClose} from "react-icons/md";
+import {MdDashboard, MdLogout, MdWorkspacePremium, MdSecurity, MdMenu, MdClose, MdShield} from "react-icons/md";
 import {Popover, Button, Stack, Text} from '@mantine/core';
 import {FaChalkboardTeacher, FaUser} from "react-icons/fa";
 import {useRouter} from "next/navigation";
@@ -51,11 +51,16 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
+    const isAdmin = user?.role === "ADMIN";
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const menuItems: (MenuItem)[] = [
         {id: "dashboard", label: "حساب کاربری", icon: <MdDashboard size={18}/>},
         {id: "plan", label: "پلن", icon: <MdWorkspacePremium size={18}/>},
         {id: "security", label: "تنظیمات امنیتی", icon: <MdSecurity size={18}/>},
-        user?.activePackage ? {id: "/dash-teach", label: "پنل تدریس", icon: <FaChalkboardTeacher size={18}/>} : null
+        user?.activePackage ? {id: "/dash-teach", label: "پنل تدریس", icon: <FaChalkboardTeacher size={18}/>} : null,
+        isAdmin ? {id: "/admin", label: "پنل ادمین", icon: <MdShield size={18}/>} : null
 
     ].filter(Boolean);
 

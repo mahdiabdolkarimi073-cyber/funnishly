@@ -1,18 +1,27 @@
 "use client";
 import { useState, useEffect } from "react";
+import { FiPlus, FiX, FiFolder, FiTrash2 } from "react-icons/fi";
+import { loadGameData, saveGameData } from "@/backend/actions/game/gameData.action";
 
-interface Question {
+interface QuizQuestion {
     id: string;
     question: string;
     answers: [string, string, string, string];
     correct: 0 | 1 | 2 | 3;
 }
 
-const KEY = "quiz_questions";
+interface SavedSet {
+    id: string;
+    title: string;
+    questions: QuizQuestion[];
+    createdAt: number;
+}
+
 function shuffle<T>(arr: T[]): T[] { return [...arr].sort(() => Math.random() - 0.5); }
 
 export default function Quiz() {
-    const [questions, setQuestions] = useState<Question[]>([]);
+    const [activeQuestions, setActiveQuestions] = useState<QuizQuestion[]>([]);
+    const [activeSetTitle, setActiveSetTitle] = useState<string>("");
     const [showModal, setShowModal] = useState(false);
 
     // form state
@@ -21,32 +30,88 @@ export default function Quiz() {
     const [correct, setCorrect] = useState<0 | 1 | 2 | 3>(0);
 
     // game state
-    const [queue, setQueue] = useState<Question[]>([]);
-    const [current, setCurrent] = useState<Question | null>(null);
+    const [queue, setQueue] = useState<QuizQuestion[]>([]);
+    const [current, setCurrent] = useState<QuizQuestion | null>(null);
     const [selected, setSelected] = useState<number | null>(null);
     const [score, setScore] = useState(0);
     const [questionIndex, setQuestionIndex] = useState(0);
     const [finished, setFinished] = useState(false);
 
+    // modal state
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalQuestions, setModalQuestions] = useState<QuizQuestion[]>([]);
+    const [savedSets, setSavedSets] = useState<SavedSet[]>([]);
+    const [showSavedSets, setShowSavedSets] = useState(false);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        const s = localStorage.getItem(KEY);
-        if (s) setQuestions(JSON.parse(s));
+        loadGameData("QUIZ").then((data) => {
+            if (data && data.sets) {
+                setSavedSets(data.sets);
+            }
+            setLoading(false);
+        });
     }, []);
 
-    function save(q: Question[]) {
-        setQuestions(q);
-        localStorage.setItem(KEY, JSON.stringify(q));
-    }
+    const persistSets = (sets: SavedSet[]) => {
+        setSavedSets(sets);
+        saveGameData("QUIZ", { sets });
+    };
 
-    function addQuestion() {
-        if (!qText.trim() || answers.some(a => !a.trim())) return alert("Please fill in all fields");
-        save([...questions, { id: crypto.randomUUID(), question: qText.trim(), answers, correct }]);
-        setQText(""); setAnswers(["", "", "", ""]); setCorrect(0);
-    }
+    const openModal = () => {
+        setModalTitle("");
+        setModalQuestions([]);
+        setQText("");
+        setAnswers(["", "", "", ""]);
+        setCorrect(0);
+        setShowModal(true);
+        setShowSavedSets(false);
+    };
+
+    const addModalQuestion = () => {
+        if (!qText.trim() || answers.some(a => !a.trim())) return;
+        setModalQuestions([...modalQuestions, {
+            id: crypto.randomUUID(),
+            question: qText.trim(),
+            answers: [...answers] as [string, string, string, string],
+            correct,
+        }]);
+        setQText("");
+        setAnswers(["", "", "", ""]);
+        setCorrect(0);
+    };
+
+    const removeModalQuestion = (id: string) => {
+        setModalQuestions(modalQuestions.filter(q => q.id !== id));
+    };
+
+    const saveCurrentSet = () => {
+        if (modalTitle.trim() === "" || modalQuestions.length === 0) return;
+        const newSet: SavedSet = {
+            id: Date.now().toString(),
+            title: modalTitle.trim(),
+            questions: [...modalQuestions],
+            createdAt: Date.now(),
+        };
+        persistSets([...savedSets, newSet]);
+        setShowModal(false);
+    };
+
+    const loadSet = (set: SavedSet) => {
+        setActiveQuestions(set.questions);
+        setActiveSetTitle(set.title);
+        setShowSavedSets(false);
+        setShowModal(false);
+    };
+
+    const deleteSet = (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        persistSets(savedSets.filter(s => s.id !== id));
+    };
 
     function startGame() {
-        if (questions.length < 5) return alert("Minimum 5 questions required");
-        const q = shuffle(questions);
+        if (activeQuestions.length < 5) return alert("Minimum 5 questions required (load a set first)");
+        const q = shuffle(activeQuestions);
         setQueue(q);
         setCurrent(q[0]);
         setQuestionIndex(0);
@@ -80,16 +145,22 @@ export default function Quiz() {
         <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center gap-6 p-4">
             <h1 className="text-3xl font-bold">Quiz</h1>
 
-            <div className="flex gap-3">
-                <button onClick={() => setShowModal(true)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm">
-                    Manage Questions ({questions.length}/5+)
+            {activeSetTitle && (
+                <div className="text-sm text-sky-400 font-medium">
+                    Active set: {activeSetTitle} ({activeQuestions.length} questions)
+                </div>
+            )}
+
+            <div className="flex gap-3 flex-wrap justify-center">
+                <button onClick={openModal} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm flex items-center gap-2">
+                    <FiFolder size={16} />
+                    Manage Sets ({savedSets.length})
                 </button>
                 <button onClick={startGame} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-sm">
                     Start Game
                 </button>
             </div>
 
-            {/* game area */}
             {!finished && current && (
                 <div className="flex flex-col gap-4 w-full max-w-md">
                     <div className="text-sm text-gray-400 text-left">
@@ -119,52 +190,115 @@ export default function Quiz() {
                 </div>
             )}
 
-            {/* modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
-                     onClick={() => setShowModal(false)}>
+                     onClick={() => { if (!showSavedSets) setShowModal(false); }}>
                     <div className="bg-gray-900 rounded-2xl p-6 w-full max-w-lg flex flex-col gap-4 max-h-[80vh]"
                          onClick={e => e.stopPropagation()}>
-                        <h2 className="text-xl font-bold shrink-0">Manage Questions</h2>
 
-                        {/* add form */}
-                        <div className="flex flex-col gap-2 shrink-0">
-                            <input value={qText} onChange={e => setQText(e.target.value)}
-                                   placeholder="Question text" className="bg-gray-800 rounded-lg px-3 py-2 text-sm outline-none" />
-                            <div className="grid grid-cols-2 gap-2">
-                                {answers.map((a, i) => (
-                                    <label key={i} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm border-2 cursor-pointer transition-all ${correct === i ? "border-emerald-500 bg-emerald-900/30" : "border-gray-700 bg-gray-800"}`}>
-                                        <input type="radio" name="correct" checked={correct === i}
-                                               onChange={() => setCorrect(i as 0|1|2|3)} className="accent-emerald-500" />
-                                        <input value={a} onChange={e => {
-                                            const n = [...answers] as [string,string,string,string];
-                                            n[i] = e.target.value; setAnswers(n);
-                                        }} placeholder={`Option ${i + 1}`} className="bg-transparent outline-none flex-1 min-w-0" />
-                                    </label>
-                                ))}
-                            </div>
-                            <button onClick={addQuestion} className="py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm">
-                                Add Question
-                            </button>
-                        </div>
+                        {!showSavedSets ? (
+                            <>
+                                <h2 className="text-xl font-bold shrink-0">Manage Sets</h2>
 
-                        {/* list */}
-                        <div className="flex flex-col gap-2 overflow-y-auto flex-1">
-                            {questions.map((q, n) => (
-                                <div key={q.id} className="bg-gray-800 rounded-lg px-3 py-2 text-sm flex items-start gap-2">
-                                    <span className="text-gray-400 shrink-0">{n + 1}.</span>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="font-medium truncate text-left">{q.question}</div>
-                                        <div className="text-emerald-400 text-xs mt-0.5 truncate text-left">✓ {q.answers[q.correct]}</div>
+                                <input
+                                    value={modalTitle}
+                                    onChange={e => setModalTitle(e.target.value)}
+                                    placeholder="Set title (e.g., Level A - Lesson 1)"
+                                    className="bg-gray-800 rounded-lg px-3 py-2 text-sm outline-none shrink-0"
+                                />
+
+                                <div className="flex flex-col gap-2 shrink-0">
+                                    <input value={qText} onChange={e => setQText(e.target.value)}
+                                           placeholder="Question text" className="bg-gray-800 rounded-lg px-3 py-2 text-sm outline-none" />
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {answers.map((a, i) => (
+                                            <label key={i} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm border-2 cursor-pointer transition-all ${correct === i ? "border-emerald-500 bg-emerald-900/30" : "border-gray-700 bg-gray-800"}`}>
+                                                <input type="radio" name="correct" checked={correct === i}
+                                                       onChange={() => setCorrect(i as 0|1|2|3)} className="accent-emerald-500" />
+                                                <input value={a} onChange={e => {
+                                                    const n = [...answers] as [string,string,string,string];
+                                                    n[i] = e.target.value; setAnswers(n);
+                                                }} placeholder={`Option ${i + 1}`} className="bg-transparent outline-none flex-1 min-w-0" />
+                                            </label>
+                                        ))}
                                     </div>
-                                    <button onClick={() => save(questions.filter(x => x.id !== q.id))}
-                                            className="text-red-400 shrink-0">✕</button>
+                                    <button onClick={addModalQuestion} className="py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm flex items-center justify-center gap-2">
+                                        <FiPlus size={16} /> Add Question
+                                    </button>
                                 </div>
-                            ))}
-                        </div>
 
-                        <button onClick={() => setShowModal(false)}
-                                className="py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm shrink-0">Close</button>
+                                <div className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
+                                    {modalQuestions.length === 0 ? (
+                                        <div className="text-gray-500 text-sm text-center py-4">
+                                            No questions added yet
+                                        </div>
+                                    ) : (
+                                        modalQuestions.map((q, n) => (
+                                            <div key={q.id} className="bg-gray-800 rounded-lg px-3 py-2 text-sm flex items-start gap-2">
+                                                <span className="text-gray-400 shrink-0">{n + 1}.</span>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-medium truncate text-left">{q.question}</div>
+                                                    <div className="text-emerald-400 text-xs mt-0.5 truncate text-left">✓ {q.answers[q.correct]}</div>
+                                                </div>
+                                                <button onClick={() => removeModalQuestion(q.id)} className="text-red-400 shrink-0">
+                                                    <FiX size={14} />
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                <div className="flex gap-2 shrink-0">
+                                    <button onClick={() => setShowSavedSets(true)} className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
+                                        Saved Sets
+                                    </button>
+                                    <button onClick={saveCurrentSet}
+                                            disabled={modalTitle.trim() === "" || modalQuestions.length === 0}
+                                            className={`flex-1 py-2 rounded-lg text-sm ${modalTitle.trim() === "" || modalQuestions.length === 0 ? "bg-gray-700 text-gray-500 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-500"}`}>
+                                        Save Set
+                                    </button>
+                                </div>
+                                <button onClick={() => setShowModal(false)} className="py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm shrink-0">
+                                    Close
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <h2 className="text-xl font-bold shrink-0">Saved Sets</h2>
+
+                                <div className="flex flex-col gap-2 overflow-y-auto flex-1">
+                                    {savedSets.length === 0 ? (
+                                        <div className="text-gray-500 text-sm text-center py-8">
+                                            No sets saved yet
+                                        </div>
+                                    ) : (
+                                        savedSets.map((set) => (
+                                            <div key={set.id} onClick={() => loadSet(set)}
+                                                className="bg-gray-800 rounded-lg px-4 py-3 cursor-pointer hover:bg-gray-700 transition-colors flex items-center justify-between group">
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-medium truncate">{set.title}</div>
+                                                    <div className="text-gray-400 text-xs">
+                                                        {set.questions.length} questions • {new Date(set.createdAt).toLocaleDateString()}
+                                                    </div>
+                                                </div>
+                                                <button onClick={(e) => deleteSet(set.id, e)} className="text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
+                                                    <FiTrash2 size={16} />
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                <div className="flex gap-2 shrink-0">
+                                    <button onClick={() => setShowSavedSets(false)} className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm">
+                                        Back
+                                    </button>
+                                    <button onClick={() => setShowModal(false)} className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
+                                        Close
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

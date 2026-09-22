@@ -1,39 +1,50 @@
 import prisma from "@/backend/module/Prisma";
-import {Badge, Button, Divider, Paper, Text, Title} from "@mantine/core";
+import {Badge, Divider, Text, Title} from "@mantine/core";
 import {redirect} from "next/navigation";
 import {getUserFromCookie} from "@/backend/actions/user/getUser.action";
-import packagePayment from "@/backend/actions/package/packagePayment.action";
-import {toast} from "react-toastify";
 import PayButton from "@/app/payment/[id]/PayButton";
+import {PackageDuration} from "@prisma/client";
 
+const DURATION_MAP: Record<string, PackageDuration> = {
+    "۱ ماهه": "MONTH1",
+    "۳ ماهه": "MONTH3",
+    "۶ ماهه": "MONTH6",
+};
 
-interface User {
-    name: string;
-    last_name: string;
-    phone: string;
-}
+const DURATION_PRICES: Record<PackageDuration, "price1m" | "price3m" | "price6m"> = {
+    MONTH1: "price1m",
+    MONTH3: "price3m",
+    MONTH6: "price6m",
+};
 
-interface Package {
-    title: string;
-    price: number;
-    options: string[];
-}
-
-
-export default async function ProformaPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProformaPage({
+    params,
+    searchParams,
+}: {
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ duration?: string }>;
+}) {
     const user = await getUserFromCookie()
     const { id } = await params
+    const { duration: durationLabel } = await searchParams
+
+    const duration: PackageDuration = DURATION_MAP[durationLabel ?? ""] ?? "MONTH1";
+
     const pkg = await prisma.package.findUnique({
-        where : {
-            id
-        }
+        where: { id }
     })
 
-    if(!pkg) return redirect("/")
+    if (!pkg) return redirect("/")
 
-    const tax = Math.round(pkg.price * 0.1);
-    const total = pkg.price + tax;
+    const price = pkg[DURATION_PRICES[duration]];
+    const tax = Math.round(price * 0.1);
+    const total = price + tax;
 
+    const durationLabels: Record<PackageDuration, string> = {
+        MONTH1: "۱ ماهه",
+        MONTH3: "۳ ماهه",
+        MONTH6: "۶ ماهه",
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex w-full items-center justify-center p-4 md:p-6" dir="rtl">
@@ -66,9 +77,12 @@ export default async function ProformaPage({ params }: { params: Promise<{ id: s
                         <Text fw={600} size="sm" c="dimmed" mb="sm">جزئیات پکیج</Text>
                         <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
                             <div className="flex justify-between items-center mb-3">
-                                <Title order={5}>{pkg.title}</Title>
+                                <div>
+                                    <Title order={5}>{pkg.title}</Title>
+                                    <Text size="xs" c="dimmed">{pkg.description}</Text>
+                                </div>
                                 <Badge color="blue" variant="light" size="lg">
-                                    {pkg.price.toLocaleString("fa-IR")} تومان
+                                    {durationLabels[duration]}
                                 </Badge>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -82,8 +96,8 @@ export default async function ProformaPage({ params }: { params: Promise<{ id: s
                     {/* Price Breakdown */}
                     <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                         <div className="flex justify-between">
-                            <Text size="sm" c="dimmed">قیمت پکیج</Text>
-                            <Text size="sm">{pkg.price.toLocaleString("fa-IR")} تومان</Text>
+                            <Text size="sm" c="dimmed">قیمت پکیج ({durationLabels[duration]})</Text>
+                            <Text size="sm">{price.toLocaleString("fa-IR")} تومان</Text>
                         </div>
                         <div className="flex justify-between">
                             <Text size="sm" c="dimmed">مالیات (۱۰٪)</Text>
@@ -109,6 +123,10 @@ export default async function ProformaPage({ params }: { params: Promise<{ id: s
                                 <Text fw={500} size="sm">{pkg.title}</Text>
                             </div>
                             <div>
+                                <Text size="xs" c="dimmed">مدت</Text>
+                                <Text fw={500} size="sm">{durationLabels[duration]}</Text>
+                            </div>
+                            <div>
                                 <Text size="xs" c="dimmed">مالیات</Text>
                                 <Text fw={500} size="sm">{tax.toLocaleString("fa-IR")} تومان</Text>
                             </div>
@@ -122,8 +140,7 @@ export default async function ProformaPage({ params }: { params: Promise<{ id: s
                     </div>
 
                     <div className="mt-6">
-                        <PayButton packageId={id} />
-
+                        <PayButton packageId={id} duration={duration} />
 
                         <Text size="xs" c="dimmed" ta="center" mt="sm">
                             پرداخت امن و رمزگذاری‌شده

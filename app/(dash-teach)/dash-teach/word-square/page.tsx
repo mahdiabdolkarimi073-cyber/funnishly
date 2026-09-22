@@ -1,12 +1,22 @@
 "use client";
 import { useState, useEffect } from "react";
+import { FiPlus, FiX, FiFolder, FiTrash2 } from "react-icons/fi";
+import { loadGameData, saveGameData } from "@/backend/actions/game/gameData.action";
 
 interface Word { id: string; text: string }
-const KEY = "wordsquare_words";
+interface SavedSet {
+    id: string;
+    title: string;
+    words: Word[];
+    gridSize: number;
+    createdAt: number;
+}
+
 function shuffle<T>(arr: T[]): T[] { return [...arr].sort(() => Math.random() - 0.5) }
 
 export default function WordSquare() {
     const [words, setWords] = useState<Word[]>([]);
+    const [activeSetTitle, setActiveSetTitle] = useState<string>("");
     const [gameWords, setGameWords] = useState<string[]>([]);
     const [grid, setGrid] = useState<(string | null)[][]>([]);
     const [hints, setHints] = useState<boolean[][]>([]);
@@ -21,25 +31,75 @@ export default function WordSquare() {
     >(null);
     const [showSizeModal, setShowSizeModal] = useState(false);
 
+    // modal state
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalWords, setModalWords] = useState<Word[]>([]);
+    const [savedSets, setSavedSets] = useState<SavedSet[]>([]);
+    const [showSavedSets, setShowSavedSets] = useState(false);
+
     useEffect(() => {
-        const s = localStorage.getItem(KEY);
-        if (s) setWords(JSON.parse(s));
+        loadGameData("WORD_SQUARE").then((data) => {
+            if (data && data.sets) {
+                setSavedSets(data.sets);
+            }
+        });
     }, []);
 
-    function save(w: Word[]) { setWords(w); localStorage.setItem(KEY, JSON.stringify(w)); }
+    const persistSets = (sets: SavedSet[]) => {
+        setSavedSets(sets);
+        saveGameData("WORD_SQUARE", { sets });
+    };
 
-    function addWord() {
+    const openModal = () => {
+        setModalTitle("");
+        setModalWords([]);
+        setInput("");
+        setShowModal(true);
+        setShowSavedSets(false);
+    };
+
+    const addModalWord = () => {
         const t = input.trim();
         if (t.length !== gridSize) return alert(`Word must be exactly ${gridSize} letters`);
-        if (words.some(w => w.text === t)) return alert("This word already exists");
-        save([...words, { id: crypto.randomUUID(), text: t }]);
+        if (modalWords.some(w => w.text === t)) return alert("This word already exists");
+        setModalWords([...modalWords, { id: crypto.randomUUID(), text: t }]);
         setInput("");
-    }
+    };
+
+    const removeModalWord = (id: string) => {
+        setModalWords(modalWords.filter(w => w.id !== id));
+    };
+
+    const saveCurrentSet = () => {
+        if (modalTitle.trim() === "" || modalWords.length < 3) return alert("Minimum 3 words required");
+        const newSet: SavedSet = {
+            id: Date.now().toString(),
+            title: modalTitle.trim(),
+            words: [...modalWords],
+            gridSize,
+            createdAt: Date.now(),
+        };
+        persistSets([...savedSets, newSet]);
+        setShowModal(false);
+    };
+
+    const loadSet = (set: SavedSet) => {
+        setWords(set.words);
+        setGridSize(set.gridSize);
+        setActiveSetTitle(set.title);
+        setShowSavedSets(false);
+        setShowModal(false);
+    };
+
+    const deleteSet = (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        persistSets(savedSets.filter(s => s.id !== id));
+    };
 
     function startGame() {
         const filteredWords = words.filter(w => w.text.length === gridSize);
         if (filteredWords.length < 3) return alert(`Minimum 3 words required with ${gridSize} letters`);
-        
+
         const selected = shuffle(filteredWords).slice(0, 3).map(w => w.text);
         setGameWords(selected);
 
@@ -123,9 +183,16 @@ export default function WordSquare() {
         <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center gap-6 p-4" dir="ltr">
             <h1 className="text-3xl font-bold">Word Square</h1>
 
+            {activeSetTitle && (
+                <div className="text-sm text-sky-400 font-medium">
+                    Active set: {activeSetTitle} ({words.filter(w => w.text.length === gridSize).length} words)
+                </div>
+            )}
+
             <div className="flex gap-3 flex-wrap justify-center">
-                <button onClick={() => setShowModal(true)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm">
-                    Manage Words ({words.filter(w => w.text.length === gridSize).length})
+                <button onClick={openModal} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm flex items-center gap-2">
+                    <FiFolder size={16} />
+                    Manage Sets ({savedSets.length})
                 </button>
                 <button onClick={startGame} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-sm">
                     Start Game
@@ -139,15 +206,13 @@ export default function WordSquare() {
 
             {inGame && (
                 <>
-                    {/* Show word hints */}
                     <div className="text-sm text-gray-400 text-center">
                         Arrange each row from LEFT to RIGHT to form the correct words
                     </div>
 
-                    {/* Dynamic Grid - LTR */}
-                    <div 
+                    <div
                         className="grid gap-1 p-2 bg-gray-900 rounded-2xl border-2 border-gray-700 w-full max-w-[90vw] sm:max-w-xs"
-                        style={{ 
+                        style={{
                             gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
                             direction: "ltr"
                         }}
@@ -166,9 +231,7 @@ export default function WordSquare() {
                                         hints[r][c] ? "bg-amber-800 border-amber-600 cursor-default" :
                                         cell ? "bg-gray-700 border-gray-500 cursor-grab" :
                                         "bg-gray-900 border-gray-700 border-dashed"}`}
-                                    style={{ 
-                                        direction: "ltr"
-                                    }}
+                                    style={{ direction: "ltr" }}
                                 >
                                     {cell || "·"}
                                 </div>
@@ -176,7 +239,6 @@ export default function WordSquare() {
                         )}
                     </div>
 
-                    {/* Shared Pool - LTR */}
                     <div
                         className="flex flex-wrap gap-2 justify-start max-w-xs p-3 bg-gray-800 rounded-xl border border-gray-600 min-h-[4rem]"
                         style={{ direction: "ltr" }}
@@ -231,43 +293,109 @@ export default function WordSquare() {
                 </div>
             )}
 
-            {/* Word Management Modal */}
+            {/* Set Management Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
-                    <div className="bg-gray-900 rounded-2xl p-6 w-96 flex flex-col gap-4 max-h-[80vh]" onClick={e => e.stopPropagation()}>
-                        <h2 className="text-xl font-bold">Manage Words ({gridSize} letters)</h2>
-                        
-                        <div className="text-sm text-gray-400">
-                            Words: {words.filter(w => w.text.length === gridSize).length} / 
-                            Available sizes: {[...new Set(words.map(w => w.text.length))].sort().join(', ')}
-                        </div>
-                        
-                        <div className="flex gap-2">
-                            <input 
-                                value={input} 
-                                onChange={e => setInput(e.target.value)} 
-                                onKeyDown={e => e.key === "Enter" && addWord()}
-                                placeholder={`${gridSize}-letter word...`} 
-                                className="flex-1 bg-gray-800 rounded-lg px-3 py-2 text-sm outline-none" 
-                            />
-                            <button onClick={addWord} className="px-3 py-2 bg-indigo-600 rounded-lg text-sm">+</button>
-                        </div>
-                        <div className="flex flex-col gap-1 max-h-48 overflow-y-auto">
-                            {words.filter(w => w.text.length === gridSize).map(w => (
-                                <div key={w.id} className="flex justify-between items-center bg-gray-800 rounded-lg px-3 py-2 text-sm">
-                                    <span className="text-left">{w.text}</span>
-                                    <button onClick={() => save(words.filter(x => x.id !== w.id))} className="text-red-400">✕</button>
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+                    onClick={() => { if (!showSavedSets) setShowModal(false); }}>
+                    <div className="bg-gray-900 rounded-2xl p-6 w-full max-w-lg flex flex-col gap-4 max-h-[80vh]"
+                        onClick={e => e.stopPropagation()}>
+
+                        {!showSavedSets ? (
+                            <>
+                                <h2 className="text-xl font-bold shrink-0">Manage Sets</h2>
+
+                                <input
+                                    value={modalTitle}
+                                    onChange={e => setModalTitle(e.target.value)}
+                                    placeholder="Set title (e.g., 3-letter animals)"
+                                    className="bg-gray-800 rounded-lg px-3 py-2 text-sm outline-none shrink-0"
+                                />
+
+                                <div className="text-sm text-gray-400 shrink-0">
+                                    Grid size: {gridSize}x{gridSize} • {modalWords.filter(w => w.text.length === gridSize).length} matching words
                                 </div>
-                            ))}
-                            {words.filter(w => w.text.length === gridSize).length === 0 && (
-                                <div className="text-gray-500 text-sm text-center py-4">
-                                    No {gridSize}-letter words added yet
+
+                                <div className="flex gap-2 shrink-0">
+                                    <input
+                                        value={input}
+                                        onChange={e => setInput(e.target.value)}
+                                        onKeyDown={e => e.key === "Enter" && addModalWord()}
+                                        placeholder={`${gridSize}-letter word...`}
+                                        className="flex-1 bg-gray-800 rounded-lg px-3 py-2 text-sm outline-none"
+                                    />
+                                    <button onClick={addModalWord} className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm flex items-center">
+                                        <FiPlus size={16} />
+                                    </button>
                                 </div>
-                            )}
-                        </div>
-                        <button onClick={() => setShowModal(false)} className="py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
-                            Close
-                        </button>
+
+                                <div className="flex flex-col gap-1 overflow-y-auto flex-1 min-h-0">
+                                    {modalWords.filter(w => w.text.length === gridSize).length === 0 ? (
+                                        <div className="text-gray-500 text-sm text-center py-4">
+                                            No {gridSize}-letter words added yet
+                                        </div>
+                                    ) : (
+                                        modalWords.filter(w => w.text.length === gridSize).map(w => (
+                                            <div key={w.id} className="flex justify-between items-center bg-gray-800 rounded-lg px-3 py-2 text-sm">
+                                                <span className="text-left">{w.text}</span>
+                                                <button onClick={() => removeModalWord(w.id)} className="text-red-400">
+                                                    <FiX size={14} />
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                <div className="flex gap-2 shrink-0">
+                                    <button onClick={() => setShowSavedSets(true)} className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
+                                        Saved Sets
+                                    </button>
+                                    <button onClick={saveCurrentSet}
+                                            disabled={modalTitle.trim() === "" || modalWords.length < 3}
+                                            className={`flex-1 py-2 rounded-lg text-sm ${modalTitle.trim() === "" || modalWords.length < 3 ? "bg-gray-700 text-gray-500 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-500"}`}>
+                                        Save Set
+                                    </button>
+                                </div>
+                                <button onClick={() => setShowModal(false)} className="py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm shrink-0">
+                                    Close
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <h2 className="text-xl font-bold shrink-0">Saved Sets</h2>
+
+                                <div className="flex flex-col gap-2 overflow-y-auto flex-1">
+                                    {savedSets.length === 0 ? (
+                                        <div className="text-gray-500 text-sm text-center py-8">
+                                            No sets saved yet
+                                        </div>
+                                    ) : (
+                                        savedSets.map((set) => (
+                                            <div key={set.id} onClick={() => loadSet(set)}
+                                                className="bg-gray-800 rounded-lg px-4 py-3 cursor-pointer hover:bg-gray-700 transition-colors flex items-center justify-between group">
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-medium truncate">{set.title}</div>
+                                                    <div className="text-gray-400 text-xs">
+                                                        {set.words.length} words • {set.gridSize}x{set.gridSize} • {new Date(set.createdAt).toLocaleDateString()}
+                                                    </div>
+                                                </div>
+                                                <button onClick={(e) => deleteSet(set.id, e)} className="text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
+                                                    <FiTrash2 size={16} />
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                <div className="flex gap-2 shrink-0">
+                                    <button onClick={() => setShowSavedSets(false)} className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm">
+                                        Back
+                                    </button>
+                                    <button onClick={() => setShowModal(false)} className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
+                                        Close
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

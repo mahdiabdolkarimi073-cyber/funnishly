@@ -126,7 +126,45 @@ exports.Prisma.UserScalarFieldEnum = {
   last_name: 'last_name',
   phone: 'phone',
   token: 'token',
-  password: 'password'
+  password: 'password',
+  role: 'role'
+};
+
+exports.Prisma.PackageScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  price1m: 'price1m',
+  price3m: 'price3m',
+  price6m: 'price6m',
+  options: 'options'
+};
+
+exports.Prisma.UserPackageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  packageId: 'packageId',
+  duration: 'duration',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  packageId: 'packageId',
+  amount: 'amount',
+  status: 'status',
+  refId: 'refId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.GameDataScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  gameType: 'gameType',
+  data: 'data',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -134,14 +172,56 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.UserRole = exports.$Enums.UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+};
+
+exports.PackageDuration = exports.$Enums.PackageDuration = {
+  MONTH1: 'MONTH1',
+  MONTH3: 'MONTH3',
+  MONTH6: 'MONTH6'
+};
+
+exports.TransactionStatus = exports.$Enums.TransactionStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+};
+
+exports.GameType = exports.$Enums.GameType = {
+  WHEEL: 'WHEEL',
+  QUIZ: 'QUIZ',
+  SENTENCE_SCRAMBLE: 'SENTENCE_SCRAMBLE',
+  WORD_MATCH: 'WORD_MATCH',
+  WORD_SQUARE: 'WORD_SQUARE'
+};
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Package: 'Package',
+  UserPackage: 'UserPackage',
+  Transaction: 'Transaction',
+  GameData: 'GameData'
 };
 
 /**
