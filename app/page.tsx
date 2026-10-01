@@ -62,54 +62,67 @@ export default async function HomePage() {
                     </div>
 
                     {/* Hero Side Card */}
-                    <div
-                        className="rounded-[2rem] border border-sky-100 bg-white/80 p-5 shadow-2xl shadow-sky-100 backdrop-blur">
-                        <div className="space-y-4">
-                            <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-                                <div className="flex items-center gap-3">
-                                    <div
-                                        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
-                                        ✓
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-slate-900">برای کلاس های حضوری و آنلاین</div>
-                                        <div className="text-sm text-slate-500">
-                                            مناسب همه محیط های آموزشی
+                    <div className="relative">
+                        <div
+                            className="rounded-[2rem] border border-sky-100 bg-white/80 p-5 shadow-2xl shadow-sky-100 backdrop-blur">
+                            <div className="space-y-4">
+                                <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
+                                            ✓
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-slate-900">برای کلاس های حضوری و آنلاین</div>
+                                            <div className="text-sm text-slate-500">
+                                                مناسب همه محیط های آموزشی
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-                                <div className="flex items-center gap-3">
-                                    <div
-                                        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
-                                        ⏱
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-slate-900">بازی محور</div>
-                                        <div className="text-sm text-slate-500">
-                                            درگیر کردن دانش‌آموزها با بازی‌های آموزشی
+                                <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
+                                            ⏱
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-slate-900">بازی محور</div>
+                                            <div className="text-sm text-slate-500">
+                                                درگیر کردن دانش‌آموزها با بازی‌های آموزشی
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-                                <div className="flex items-center gap-3">
-                                    <div
-                                        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
-                                        ★
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-slate-900">مناسب همه دروس*</div>
-                                        <div className="text-sm text-slate-500">
-                                            از زبان انگلیسی گرفته تا ریاضی و ادبیات
+                                <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
+                                            ★
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-slate-900">مناسب همه دروس*</div>
+                                            <div className="text-sm text-slate-500">
+                                                از زبان انگلیسی گرفته تا ریاضی و ادبیات
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <img
+                            src="/images/home/Laptop.png"
+                            alt="فانیشلی روی لپ‌تاپ"
+                            className="absolute -bottom-10 -left-10 w-48 drop-shadow-2xl transition-transform duration-500 hover:scale-105 hidden lg:block"
+                        />
+                        <img
+                            src="/images/home/Pre_-_Tablet.png"
+                            alt="فانیشلی روی تبلت"
+                            className="absolute -top-8 -right-8 w-32 drop-shadow-xl transition-transform duration-500 hover:scale-105 hidden lg:block"
+                        />
                     </div>
                 </div>
             </section>

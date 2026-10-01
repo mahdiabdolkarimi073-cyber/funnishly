@@ -73,8 +73,9 @@ export default function LoginForm() {
                         کنید</Link></p>
 
                 </Paper>
-                <div className="hidden md:block md:w-[460px]">
+                <div className="hidden md:block md:w-[460px] relative">
                     <img className="h-full w-full object-cover" src="/images/auth/banner.png" alt=""/>
+                    <img className="absolute bottom-6 right-6 w-36 rounded-xl shadow-2xl border-4 border-white/90" src="/images/auth/Fig_01.png" alt=""/>
                 </div>
             </div>
         </div>
