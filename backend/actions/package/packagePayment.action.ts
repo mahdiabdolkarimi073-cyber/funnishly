@@ -4,7 +4,7 @@ import {getUserFromCookie, getUserFromCookieWithAllData} from "@/backend/actions
 import prisma from "@/backend/module/Prisma";
 import {ActionResponse} from "@/types/Types";
 import {error} from "@/backend/utils/response";
-import {PackageDuration} from "@prisma/client";
+import {PackageDuration} from "@/app/generated/prisma";
 
 const DURATION_PRICES: Record<PackageDuration, keyof { price1m: number; price3m: number; price6m: number }> = {
     MONTH1: "price1m",

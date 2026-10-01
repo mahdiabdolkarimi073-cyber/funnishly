@@ -2,7 +2,7 @@
 
 import prisma from "@/backend/module/Prisma";
 import { getUserFromCookie } from "@/backend/actions/user/getUser.action";
-import { UserRole, PackageDuration, TransactionStatus } from "@prisma/client";
+import { UserRole, PackageDuration, TransactionStatus } from "@/app/generated/prisma";
 import { error, response } from "@/backend/utils/response";
 
 async function requireAdmin() {

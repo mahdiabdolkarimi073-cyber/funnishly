@@ -2,7 +2,7 @@
 
 import prisma from "@/backend/module/Prisma";
 import {User} from "@/types/Types";
-import {Package, Prisma} from "@prisma/client";
+import {Package, Prisma} from "@/app/generated/prisma";
 import {cookies} from "next/headers";
 
 

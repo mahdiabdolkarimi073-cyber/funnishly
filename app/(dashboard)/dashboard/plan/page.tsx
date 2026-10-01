@@ -2,7 +2,7 @@ import React from 'react';
 import {Button} from "@mantine/core";
 
 import getUserPackages from "@/backend/actions/user/getPackage.action";
-import {PackageDuration} from "@prisma/client";
+import {PackageDuration} from "@/app/generated/prisma";
 
 const DURATION_PRICES: Record<PackageDuration, "price1m" | "price3m" | "price6m"> = {
     MONTH1: "price1m",

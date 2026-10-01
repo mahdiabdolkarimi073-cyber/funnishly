@@ -2,7 +2,7 @@
 import { useState, useTransition } from "react";
 import { useServerAction } from "@/hooks/useServerAction";
 import { getAllTransactions, updateTransactionStatus } from "@/backend/actions/admin/admin.action";
-import { TransactionStatus } from "@prisma/client";
+import { TransactionStatus } from "@/app/generated/prisma";
 import { MdReceipt, MdSearch } from "react-icons/md";
 import { toast } from "react-toastify";
 

@@ -2,7 +2,7 @@
 
 import prisma from "@/backend/module/Prisma";
 import { getUserFromCookie } from "@/backend/actions/user/getUser.action";
-import { GameType } from "@prisma/client";
+import { GameType } from "@/app/generated/prisma";
 
 export async function loadGameData(gameType: GameType): Promise<any | null> {
     const user = await getUserFromCookie();

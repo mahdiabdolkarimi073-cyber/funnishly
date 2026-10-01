@@ -7,7 +7,7 @@ import {
     deleteUser,
     revokeUserPackage,
 } from "@/backend/actions/admin/admin.action";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/app/generated/prisma";
 import { MdPeople, MdSearch, MdDelete, MdBlock, MdStar } from "react-icons/md";
 import { toast } from "react-toastify";
 

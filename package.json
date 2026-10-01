@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate && node -e \"const fs=require('fs');const p=require('path');const src='app/generated/prisma';const dst='node_modules/.prisma/client';fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true})\""
+    "seed:admin": "npx tsx prisma/seed-admin.ts",
+    "prisma:generate": "prisma generate && node -e \"const fs=require('fs');const src='app/generated/prisma';const dst='node_modules/.prisma/client';fs.rmSync(dst,{recursive:true,force:true});fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true})\"",
+    "predev": "prisma generate && node -e \"const fs=require('fs');const src='app/generated/prisma';const dst='node_modules/.prisma/client';fs.rmSync(dst,{recursive:true,force:true});fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true});fs.rmSync('.next',{recursive:true,force:true})\"",
+    "postinstall": "prisma generate && node -e \"const fs=require('fs');const src='app/generated/prisma';const dst='node_modules/.prisma/client';fs.rmSync(dst,{recursive:true,force:true});fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true})\""
   },
   "dependencies": {
     "@mantine/core": "^9.2.2",
