@@ -86,7 +86,7 @@ export default function RegistrationForm() {
 
                 </Paper>
                 <div className="hidden md:block md:w-[460px]">
-                    <img className="h-full w-full object-cover" src="/images/auth/banner.png" alt="" />
+                    <img className="h-full w-full object-cover" src="/images/auth/Fig_01.png" alt="" />
                 </div>
             </div>
 

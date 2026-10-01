@@ -34,10 +34,17 @@ export default async function HomePage() {
                             فانیشلی
                         </div>
 
-                        <h1 className="mt-5 text-2xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl">
-                            فانیشلی؛ هوشمندسازی کلاس
-                            <span className="block text-sky-700">خلقِ تجربه‌ای ماندگار برای دانش‌آموزان امروز</span>
-                        </h1>
+                        <div className="flex items-start gap-5">
+                            <img
+                                src="/images/home/Laptop.png"
+                                alt="فانیشلی"
+                                className="w-28 sm:w-36 lg:w-44 drop-shadow-2xl shrink-0 transition-transform duration-500 hover:scale-105"
+                            />
+                            <h1 className="mt-5 text-2xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl">
+                                فانیشلی؛ هوشمندسازی کلاس
+                                <span className="block text-sky-700">خلقِ تجربه‌ای ماندگار برای دانش‌آموزان امروز</span>
+                            </h1>
+                        </div>
 
                         <p className="mt-5 max-w-xl text-base leading-8 text-slate-600 sm:text-lg">
                             با فانیشلی، فاصله بین متد‌های آموزشی سنتی و انتظارات نسل امروز را به سادگی از میان بردارید. از تایمر و گردونه گرفته تا کوییز و تاس، به سادگی همه ابزارهای لازم برای درگیر کردن دانش‌آموزان نسل امروز را در اختیار خواهید داشت.
@@ -113,16 +120,7 @@ export default async function HomePage() {
                             </div>
                         </div>
 
-                        <img
-                            src="/images/home/Laptop.png"
-                            alt="فانیشلی روی لپ‌تاپ"
-                            className="absolute -bottom-10 -left-10 w-48 drop-shadow-2xl transition-transform duration-500 hover:scale-105 hidden lg:block"
-                        />
-                        <img
-                            src="/images/home/Pre_-_Tablet.png"
-                            alt="فانیشلی روی تبلت"
-                            className="absolute -top-8 -right-8 w-32 drop-shadow-xl transition-transform duration-500 hover:scale-105 hidden lg:block"
-                        />
+
                     </div>
                 </div>
             </section>
@@ -356,8 +354,15 @@ export default async function HomePage() {
                             <div className="flex items-center gap-3">
                                 <Logo />
                             </div>
-                            <p className="mt-4 leading-8 text-slate-600">
-                                فانیشلی با هدف توانمند کردن معلمان و مدرس‌ها طراحی شده است؛                             </p>
+                            <div className="mt-4 flex items-start gap-4">
+                                <img
+                                    src="/images/home/Pre_-_Tablet.png"
+                                    alt="فانیشلی"
+                                    className="w-24 sm:w-32 drop-shadow-xl shrink-0 transition-transform duration-500 hover:scale-105"
+                                />
+                                <p className="leading-8 text-slate-600">
+                                    فانیشلی با هدف توانمند کردن معلمان و مدرس‌ها طراحی شده است؛                             </p>
+                            </div>
                         </div>
                         <div className="flex flex-col gap-6">
                             <div className="flex flex-wrap gap-3">
