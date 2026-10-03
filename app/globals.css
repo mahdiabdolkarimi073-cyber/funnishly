@@ -112,3 +112,24 @@
 body {
   font-family: Dana;
 }
+
+.mantine-Input-input,
+.mantine-TextInput-input,
+.mantine-PasswordInput-input {
+  color: #101947 !important;
+  background-color: #ffffff !important;
+  caret-color: #4f46e5;
+}
+
+.mantine-Input-input::placeholder,
+.mantine-TextInput-input::placeholder,
+.mantine-PasswordInput-input::placeholder {
+  color: #8994b2 !important;
+  opacity: 1;
+}
+
+.mantine-Input-label,
+.mantine-TextInput-label,
+.mantine-PasswordInput-label {
+  color: #24315f !important;
+}
