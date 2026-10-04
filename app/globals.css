@@ -133,3 +133,90 @@ body {
 .mantine-PasswordInput-label {
   color: #24315f !important;
 }
+
+/* ===== Home Page Animations ===== */
+
+@keyframes fn-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(3deg); }
+}
+
+@keyframes fn-float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes fn-float-rev {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(10px) rotate(-4deg); }
+}
+
+@keyframes fn-fade-up {
+  from { opacity: 0; transform: translateY(36px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fn-spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fn-wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes fn-bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+  60% { transform: translateY(2px); }
+}
+
+@keyframes fn-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(59,130,246,.4); }
+  70% { box-shadow: 0 0 0 12px rgba(59,130,246,0); }
+  100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+}
+
+.fn-float { animation: fn-float 6s ease-in-out infinite; }
+.fn-float-slow { animation: fn-float-slow 5s ease-in-out infinite; }
+.fn-float-rev { animation: fn-float-rev 7s ease-in-out infinite; }
+.fn-spin-slow { animation: fn-spin-slow 14s linear infinite; }
+.fn-wiggle { animation: fn-wiggle 2.5s ease-in-out infinite; }
+.fn-bounce-soft { animation: fn-bounce-soft 2s ease-in-out infinite; }
+.fn-pulse-ring { animation: fn-pulse-ring 2.5s ease-out infinite; }
+
+.fn-fade-up {
+  opacity: 0;
+  animation: fn-fade-up 0.7s ease-out forwards;
+}
+
+.fn-delay-1 { animation-delay: .1s; }
+.fn-delay-2 { animation-delay: .2s; }
+.fn-delay-3 { animation-delay: .3s; }
+.fn-delay-4 { animation-delay: .4s; }
+.fn-delay-5 { animation-delay: .5s; }
+
+.fn-card-hover {
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease;
+}
+.fn-card-hover:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+.fn-btn-press {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.fn-btn-press:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+.fn-btn-press:active {
+  transform: translateY(1px) scale(.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fn-float, .fn-float-slow, .fn-float-rev, .fn-spin-slow, .fn-wiggle, .fn-bounce-soft, .fn-pulse-ring, .fn-fade-up {
+    animation: none;
+    opacity: 1;
+  }
+}
