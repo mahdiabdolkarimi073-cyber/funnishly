@@ -134,8 +134,40 @@ export default function UserProfile() {
                 </div>
             </div>
 
+            {/* ===================== GO TO TEACHING PANEL BANNER ===================== */}
+            <button
+                onClick={() => router.push("/dash-teach")}
+                className="group relative w-full overflow-hidden rounded-[28px] border border-white bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 p-6 md:p-8 text-right shadow-[0_8px_30px_rgba(16,185,129,.08)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(16,185,129,.14)] fn-card-hover fn-fade-up fn-delay-2"
+            >
+                <div className="pointer-events-none absolute -left-10 -top-10 h-32 w-32 rounded-full bg-emerald-200/30 blur-2xl"/>
+                <div className="pointer-events-none absolute -right-10 -bottom-10 h-28 w-28 rounded-full bg-blue-200/25 blur-2xl"/>
+                <div className="pointer-events-none absolute right-[8%] top-[20%] fn-float-slow">
+                    <HiSparkles size={16} className="text-emerald-400/50"/>
+                </div>
+
+                <div className="relative flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-400 to-blue-500 text-white shadow-xl shadow-emerald-200/50 shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                            <FaChalkboardTeacher size={30}/>
+                        </div>
+                        <div className="min-w-0">
+                            <h3 className="font-black text-lg md:text-xl text-[#1a2151]">رفتن به پنل تدریس 🚀</h3>
+                            <p className="text-slate-500 text-sm mt-1">ابزارهای تعاملی کلاس را شروع کنید — تایمر، گردونه، تاس، کوییز و بیشتر</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-700 transition-all duration-300 group-hover:bg-emerald-200">
+                            شروع فعالیت
+                        </span>
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-emerald-500 shadow-md transition-all duration-300 group-hover:-translate-x-1">
+                            <HiArrowLeft size={20}/>
+                        </span>
+                    </div>
+                </div>
+            </button>
+
             {/* ===================== PROFILE + QUICK ACTIONS GRID ===================== */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 fn-fade-up fn-delay-2">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 fn-fade-up fn-delay-3">
 
                 {/* Profile Card */}
                 <div className="bg-white rounded-[28px] border border-blue-50 shadow-[0_8px_30px_rgba(59,130,246,.06)] overflow-hidden">

@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FiPlus, FiX, FiFolder, FiTrash2 } from "react-icons/fi";
+import { HiSparkles } from "react-icons/hi";
+import { MdGridOn } from "react-icons/md";
 import { loadGameData, saveGameData } from "@/backend/actions/game/gameData.action";
 
 interface Word { id: string; text: string }
@@ -31,7 +33,6 @@ export default function WordSquare() {
     >(null);
     const [showSizeModal, setShowSizeModal] = useState(false);
 
-    // modal state
     const [modalTitle, setModalTitle] = useState("");
     const [modalWords, setModalWords] = useState<Word[]>([]);
     const [savedSets, setSavedSets] = useState<SavedSet[]>([]);
@@ -39,9 +40,7 @@ export default function WordSquare() {
 
     useEffect(() => {
         loadGameData("WORD_SQUARE").then((data) => {
-            if (data && data.sets) {
-                setSavedSets(data.sets);
-            }
+            if (data && data.sets) setSavedSets(data.sets);
         });
     }, []);
 
@@ -51,11 +50,8 @@ export default function WordSquare() {
     };
 
     const openModal = () => {
-        setModalTitle("");
-        setModalWords([]);
-        setInput("");
-        setShowModal(true);
-        setShowSavedSets(false);
+        setModalTitle(""); setModalWords([]); setInput("");
+        setShowModal(true); setShowSavedSets(false);
     };
 
     const addModalWord = () => {
@@ -66,29 +62,17 @@ export default function WordSquare() {
         setInput("");
     };
 
-    const removeModalWord = (id: string) => {
-        setModalWords(modalWords.filter(w => w.id !== id));
-    };
+    const removeModalWord = (id: string) => setModalWords(modalWords.filter(w => w.id !== id));
 
     const saveCurrentSet = () => {
         if (modalTitle.trim() === "" || modalWords.length < 3) return alert("Minimum 3 words required");
-        const newSet: SavedSet = {
-            id: Date.now().toString(),
-            title: modalTitle.trim(),
-            words: [...modalWords],
-            gridSize,
-            createdAt: Date.now(),
-        };
-        persistSets([...savedSets, newSet]);
+        persistSets([...savedSets, { id: Date.now().toString(), title: modalTitle.trim(), words: [...modalWords], gridSize, createdAt: Date.now() }]);
         setShowModal(false);
     };
 
     const loadSet = (set: SavedSet) => {
-        setWords(set.words);
-        setGridSize(set.gridSize);
-        setActiveSetTitle(set.title);
-        setShowSavedSets(false);
-        setShowModal(false);
+        setWords(set.words); setGridSize(set.gridSize); setActiveSetTitle(set.title);
+        setShowSavedSets(false); setShowModal(false);
     };
 
     const deleteSet = (id: string, e: React.MouseEvent) => {
@@ -99,7 +83,6 @@ export default function WordSquare() {
     function startGame() {
         const filteredWords = words.filter(w => w.text.length === gridSize);
         if (filteredWords.length < 3) return alert(`Minimum 3 words required with ${gridSize} letters`);
-
         const selected = shuffle(filteredWords).slice(0, 3).map(w => w.text);
         setGameWords(selected);
 
@@ -120,8 +103,7 @@ export default function WordSquare() {
             newHints.push(hintRow);
         });
 
-        setGrid(newGrid);
-        setHints(newHints);
+        setGrid(newGrid); setHints(newHints);
         setPool(shuffle(poolLetters));
         setCompleted([false, false, false]);
         setWon(false);
@@ -129,29 +111,18 @@ export default function WordSquare() {
 
     function dropOnCell(row: number, col: number) {
         if (!dragging || hints[row]?.[col]) return;
-
         const newGrid = grid.map(r => [...r]);
         const newPool = [...pool];
-
         let letter: string | null = null;
         if (dragging.from === "pool") letter = newPool[dragging.idx];
         else letter = newGrid[dragging.row][dragging.col];
-
         if (!letter) return;
 
         const displaced = newGrid[row][col];
         newGrid[row][col] = letter;
-
-        if (dragging.from === "pool") {
-            newPool[dragging.idx] = null;
-        } else {
-            newGrid[dragging.row][dragging.col] = null;
-        }
-
-        if (displaced) {
-            const ei = newPool.findIndex(x => x === null);
-            if (ei !== -1) newPool[ei] = displaced; else newPool.push(displaced);
-        }
+        if (dragging.from === "pool") { newPool[dragging.idx] = null; }
+        else { newGrid[dragging.row][dragging.col] = null; }
+        if (displaced) { const ei = newPool.findIndex(x => x === null); if (ei !== -1) newPool[ei] = displaced; else newPool.push(displaced); }
 
         setGrid(newGrid); setPool(newPool);
         checkWin(newGrid); setDragging(null);
@@ -180,114 +151,137 @@ export default function WordSquare() {
     const inGame = gameWords.length > 0;
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center gap-6 p-4" dir="ltr">
-            <h1 className="text-3xl font-bold">Word Square</h1>
-
-            {activeSetTitle && (
-                <div className="text-sm text-sky-400 font-medium">
-                    Active set: {activeSetTitle} ({words.filter(w => w.text.length === gridSize).length} words)
+        <div className="mx-auto max-w-[900px]" dir="rtl">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-6 fn-fade-up">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500 shadow-md shadow-emerald-100/50">
+                    <MdGridOn size={28}/>
                 </div>
-            )}
-
-            <div className="flex gap-3 flex-wrap justify-center">
-                <button onClick={openModal} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm flex items-center gap-2">
-                    <FiFolder size={16} />
-                    Manage Sets ({savedSets.length})
-                </button>
-                <button onClick={startGame} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-sm">
-                    Start Game
-                </button>
-                <button onClick={() => setShowSizeModal(true)} className="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-sm">
-                    Grid Size: {gridSize}x{gridSize}
-                </button>
+                <div>
+                    <h2 className="font-black text-xl text-[#1a2151]">مربع کلمات</h2>
+                    <p className="text-slate-400 text-sm">پیدا کردن کلمات در شبکه حروف</p>
+                </div>
             </div>
 
-            {won && <div className="text-2xl font-bold text-emerald-400 animate-bounce">🎉 Congratulations! All words complete!</div>}
+            {/* Main card */}
+            <div className="relative overflow-hidden rounded-[28px] border border-white bg-white shadow-[0_8px_40px_rgba(16,185,129,.08)] fn-fade-up fn-delay-1">
+                <div className="pointer-events-none absolute -left-10 -top-10 h-32 w-32 rounded-full bg-emerald-50/40 blur-2xl"/>
 
-            {inGame && (
-                <>
-                    <div className="text-sm text-gray-400 text-center">
-                        Arrange each row from LEFT to RIGHT to form the correct words
+                <div className="relative flex flex-col items-center gap-5 p-6 md:p-10">
+                    {activeSetTitle && (
+                        <span className="flex items-center gap-1.5 rounded-full bg-emerald-100 px-4 py-1.5 text-xs font-bold text-emerald-600">
+                            <HiSparkles size={14}/> مجموعه: {activeSetTitle}
+                        </span>
+                    )}
+
+                    {/* Action buttons */}
+                    <div className="flex gap-3 flex-wrap justify-center" dir="ltr">
+                        <button onClick={openModal} className="px-5 py-3 rounded-2xl bg-purple-500 hover:bg-purple-600 text-white text-sm font-bold transition-colors flex items-center gap-2 shadow-md shadow-purple-200/50">
+                            <FiFolder size={16}/> مجموعه‌ها ({savedSets.length})
+                        </button>
+                        <button onClick={startGame} className="px-5 py-3 rounded-2xl bg-gradient-to-l from-emerald-500 to-blue-500 text-white text-sm font-bold transition-all shadow-md shadow-emerald-200/50 fn-btn-press">
+                            شروع بازی
+                        </button>
+                        <button onClick={() => setShowSizeModal(true)} className="px-5 py-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-sm font-bold transition-colors border border-slate-200">
+                            اندازه: {gridSize}×{gridSize}
+                        </button>
                     </div>
 
-                    <div
-                        className="grid gap-1 p-2 bg-gray-900 rounded-2xl border-2 border-gray-700 w-full max-w-[90vw] sm:max-w-xs"
-                        style={{
-                            gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-                            direction: "ltr"
-                        }}
-                    >
-                        {grid.map((row, r) =>
-                            row.map((cell, c) => (
-                                <div
-                                    key={`${r}-${c}`}
-                                    onDragOver={e => e.preventDefault()}
-                                    onDrop={() => dropOnCell(r, c)}
-                                    draggable={!!cell && !hints[r][c]}
-                                    onDragStart={() => cell && !hints[r][c] && setDragging({ from: "grid", row: r, col: c })}
-                                    onDragEnd={() => setDragging(null)}
-                                    className={`aspect-square w-full flex items-center justify-center text-lg sm:text-xl font-bold rounded-xl border-2 transition-all
-                                        ${completed[r] ? "bg-emerald-600 border-emerald-400" :
-                                        hints[r][c] ? "bg-amber-800 border-amber-600 cursor-default" :
-                                        cell ? "bg-gray-700 border-gray-500 cursor-grab" :
-                                        "bg-gray-900 border-gray-700 border-dashed"}`}
-                                    style={{ direction: "ltr" }}
-                                >
-                                    {cell || "·"}
-                                </div>
-                            ))
-                        )}
-                    </div>
+                    {won && (
+                        <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 px-6 py-3 fn-fade-up">
+                            <span className="text-emerald-600 font-black text-xl">🎉 آفرین! همه کلمات کامل شدند!</span>
+                        </div>
+                    )}
 
-                    <div
-                        className="flex flex-wrap gap-2 justify-start max-w-xs p-3 bg-gray-800 rounded-xl border border-gray-600 min-h-[4rem]"
-                        style={{ direction: "ltr" }}
-                        onDragOver={e => e.preventDefault()}
-                        onDrop={dropOnPool}
-                    >
-                        {pool.map((letter, idx) =>
-                            letter ? (
-                                <div
-                                    key={idx}
-                                    draggable
-                                    onDragStart={() => setDragging({ from: "pool", idx })}
-                                    onDragEnd={() => setDragging(null)}
-                                    className="w-12 h-12 flex items-center justify-center bg-indigo-700 border border-indigo-500 rounded-lg text-lg font-bold cursor-grab"
-                                >
-                                    {letter}
-                                </div>
-                            ) : null
-                        )}
-                    </div>
-                </>
-            )}
+                    {!inGame && !won && (
+                        <div className="flex flex-col items-center gap-3 py-8">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-400 fn-float-slow">
+                                <MdGridOn size={32}/>
+                            </div>
+                            <p className="text-slate-400 text-sm text-center max-w-xs">یک مجموعه کلمات انتخاب کنید و روی «شروع بازی» کلیک کنید</p>
+                        </div>
+                    )}
+
+                    {inGame && (
+                        <>
+                            <p className="text-slate-400 text-sm text-center">هر ردیف را از چپ به راست مرتب کنید تا کلمه صحیح ساخته شود</p>
+
+                            {/* Grid */}
+                            <div
+                                className="grid gap-1.5 p-3 bg-emerald-50/30 rounded-2xl border-2 border-emerald-100 w-full max-w-[90vw] sm:max-w-xs"
+                                style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)`, direction: "ltr" }}
+                            >
+                                {grid.map((row, r) =>
+                                    row.map((cell, c) => (
+                                        <div
+                                            key={`${r}-${c}`}
+                                            onDragOver={e => e.preventDefault()}
+                                            onDrop={() => dropOnCell(r, c)}
+                                            draggable={!!cell && !hints[r][c]}
+                                            onDragStart={() => cell && !hints[r][c] && setDragging({ from: "grid", row: r, col: c })}
+                                            onDragEnd={() => setDragging(null)}
+                                            className={`aspect-square w-full flex items-center justify-center text-lg sm:text-xl font-black rounded-xl border-2 transition-all
+                                                ${completed[r] ? "bg-emerald-500 border-emerald-400 text-white shadow-md shadow-emerald-200/50" :
+                                                hints[r][c] ? "bg-amber-100 border-amber-300 text-amber-700 cursor-default" :
+                                                cell ? "bg-blue-100 border-blue-300 text-blue-700 cursor-grab shadow-sm" :
+                                                "bg-white border-emerald-200 border-dashed text-slate-300"}`}
+                                            style={{ direction: "ltr" }}
+                                        >
+                                            {cell || "·"}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            {/* Pool */}
+                            <div
+                                className="flex flex-wrap gap-2 justify-start max-w-xs p-3 bg-blue-50/30 rounded-2xl border border-blue-100 min-h-[4rem]"
+                                style={{ direction: "ltr" }}
+                                onDragOver={e => e.preventDefault()}
+                                onDrop={dropOnPool}
+                            >
+                                {pool.map((letter, idx) =>
+                                    letter ? (
+                                        <div
+                                            key={idx}
+                                            draggable
+                                            onDragStart={() => setDragging({ from: "pool", idx })}
+                                            onDragEnd={() => setDragging(null)}
+                                            className="w-12 h-12 flex items-center justify-center bg-blue-500 text-white border border-blue-400 rounded-xl text-lg font-black cursor-grab shadow-md shadow-blue-200/50"
+                                        >
+                                            {letter}
+                                        </div>
+                                    ) : null
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
 
             {/* Size Selection Modal */}
             {showSizeModal && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setShowSizeModal(false)}>
-                    <div className="bg-gray-900 rounded-2xl p-6 w-80 flex flex-col gap-4" onClick={e => e.stopPropagation()}>
-                        <h2 className="text-xl font-bold">Select Grid Size</h2>
+                <div className="fixed inset-0 bg-[#1a2151]/30 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowSizeModal(false)}>
+                    <div className="bg-white rounded-[24px] p-6 w-80 flex flex-col gap-4 shadow-2xl border border-emerald-50" onClick={e => e.stopPropagation()}>
+                        <h2 className="text-lg font-black text-[#1a2151]">انتخاب اندازه شبکه</h2>
                         <div className="flex flex-col gap-2">
                             {[3, 4, 5, 6, 7, 8].map(size => {
                                 const count = words.filter(w => w.text.length === size).length;
                                 return (
                                     <button
                                         key={size}
-                                        onClick={() => {
-                                            setGridSize(size);
-                                            setShowSizeModal(false);
-                                        }}
-                                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-all flex justify-between items-center
-                                            ${gridSize === size ? 'bg-indigo-600 border-2 border-indigo-400' : 'bg-gray-800 hover:bg-gray-700'}`}
+                                        onClick={() => { setGridSize(size); setShowSizeModal(false); }}
+                                        className={`px-4 py-3 rounded-2xl text-sm font-bold transition-all flex justify-between items-center
+                                            ${gridSize === size ? 'bg-emerald-500 text-white border-2 border-emerald-400' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-100'}`}
                                     >
-                                        <span>{size}x{size}</span>
-                                        <span className="text-xs text-gray-400">{count} words available</span>
+                                        <span>{size}×{size}</span>
+                                        <span className={`text-xs ${gridSize === size ? 'text-emerald-100' : 'text-slate-400'}`}>{count} کلمه</span>
                                     </button>
                                 );
                             })}
                         </div>
-                        <button onClick={() => setShowSizeModal(false)} className="py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
-                            Close
+                        <button onClick={() => setShowSizeModal(false)} className="py-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl text-sm font-bold text-slate-500 transition-colors border border-slate-100">
+                            بستن
                         </button>
                     </div>
                 </div>
@@ -295,24 +289,29 @@ export default function WordSquare() {
 
             {/* Set Management Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+                <div className="fixed inset-0 bg-[#1a2151]/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
                     onClick={() => { if (!showSavedSets) setShowModal(false); }}>
-                    <div className="bg-gray-900 rounded-2xl p-6 w-full max-w-lg flex flex-col gap-4 max-h-[80vh]"
+                    <div className="bg-white rounded-[24px] p-6 w-full max-w-lg flex flex-col gap-4 max-h-[80vh] shadow-2xl border border-emerald-50"
                         onClick={e => e.stopPropagation()}>
 
                         {!showSavedSets ? (
                             <>
-                                <h2 className="text-xl font-bold shrink-0">Manage Sets</h2>
+                                <div className="flex items-center gap-3 shrink-0">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-500">
+                                        <FiFolder size={20}/>
+                                    </div>
+                                    <h2 className="text-lg font-black text-[#1a2151]">مدیریت مجموعه‌ها</h2>
+                                </div>
 
                                 <input
                                     value={modalTitle}
                                     onChange={e => setModalTitle(e.target.value)}
-                                    placeholder="Set title (e.g., 3-letter animals)"
-                                    className="bg-gray-800 rounded-lg px-3 py-2 text-sm outline-none shrink-0"
+                                    placeholder="عنوان مجموعه (مثلاً: حیوانات ۳ حرفی)"
+                                    className="rounded-2xl border-2 border-emerald-100 bg-emerald-50/20 px-4 py-3 text-sm text-[#1a2151] outline-none focus:border-emerald-400 transition-colors shrink-0"
                                 />
 
-                                <div className="text-sm text-gray-400 shrink-0">
-                                    Grid size: {gridSize}x{gridSize} • {modalWords.filter(w => w.text.length === gridSize).length} matching words
+                                <div className="text-sm text-slate-400 shrink-0">
+                                    اندازه شبکه: {gridSize}×{gridSize} • {modalWords.filter(w => w.text.length === gridSize).length} کلمه
                                 </div>
 
                                 <div className="flex gap-2 shrink-0">
@@ -320,25 +319,23 @@ export default function WordSquare() {
                                         value={input}
                                         onChange={e => setInput(e.target.value)}
                                         onKeyDown={e => e.key === "Enter" && addModalWord()}
-                                        placeholder={`${gridSize}-letter word...`}
-                                        className="flex-1 bg-gray-800 rounded-lg px-3 py-2 text-sm outline-none"
+                                        placeholder={`کلمه ${gridSize} حرفی...`}
+                                        className="flex-1 rounded-2xl border-2 border-blue-100 bg-blue-50/20 px-4 py-3 text-sm text-[#1a2151] outline-none focus:border-blue-400 transition-colors"
                                     />
-                                    <button onClick={addModalWord} className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm flex items-center">
-                                        <FiPlus size={16} />
+                                    <button onClick={addModalWord} className="px-4 py-3 bg-blue-500 hover:bg-blue-600 rounded-2xl text-white text-sm flex items-center transition-colors">
+                                        <FiPlus size={16}/>
                                     </button>
                                 </div>
 
-                                <div className="flex flex-col gap-1 overflow-y-auto flex-1 min-h-0">
+                                <div className="flex flex-col gap-1.5 overflow-y-auto flex-1 min-h-0">
                                     {modalWords.filter(w => w.text.length === gridSize).length === 0 ? (
-                                        <div className="text-gray-500 text-sm text-center py-4">
-                                            No {gridSize}-letter words added yet
-                                        </div>
+                                        <div className="text-slate-400 text-sm text-center py-4">هنوز کلمه‌ای اضافه نشده</div>
                                     ) : (
                                         modalWords.filter(w => w.text.length === gridSize).map(w => (
-                                            <div key={w.id} className="flex justify-between items-center bg-gray-800 rounded-lg px-3 py-2 text-sm">
-                                                <span className="text-left">{w.text}</span>
-                                                <button onClick={() => removeModalWord(w.id)} className="text-red-400">
-                                                    <FiX size={14} />
+                                            <div key={w.id} className="flex justify-between items-center bg-slate-50 rounded-xl px-4 py-2.5 text-sm border border-slate-100">
+                                                <span className="text-[#1a2151] font-bold">{w.text}</span>
+                                                <button onClick={() => removeModalWord(w.id)} className="text-red-400 hover:text-red-500">
+                                                    <FiX size={14}/>
                                                 </button>
                                             </div>
                                         ))
@@ -346,40 +343,45 @@ export default function WordSquare() {
                                 </div>
 
                                 <div className="flex gap-2 shrink-0">
-                                    <button onClick={() => setShowSavedSets(true)} className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
-                                        Saved Sets
+                                    <button onClick={() => setShowSavedSets(true)} className="flex-1 py-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl text-sm font-bold text-slate-600 transition-colors border border-slate-100">
+                                        مجموعه‌ها
                                     </button>
-                                    <button onClick={saveCurrentSet}
-                                            disabled={modalTitle.trim() === "" || modalWords.length < 3}
-                                            className={`flex-1 py-2 rounded-lg text-sm ${modalTitle.trim() === "" || modalWords.length < 3 ? "bg-gray-700 text-gray-500 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-500"}`}>
-                                        Save Set
+                                    <button
+                                        onClick={saveCurrentSet}
+                                        disabled={modalTitle.trim() === "" || modalWords.length < 3}
+                                        className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-colors ${modalTitle.trim() === "" || modalWords.length < 3 ? "bg-slate-100 text-slate-300 cursor-not-allowed" : "bg-emerald-500 hover:bg-emerald-600 text-white"}`}
+                                    >
+                                        ذخیره
                                     </button>
                                 </div>
-                                <button onClick={() => setShowModal(false)} className="py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm shrink-0">
-                                    Close
+                                <button onClick={() => setShowModal(false)} className="py-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl text-sm font-bold text-slate-500 transition-colors border border-slate-100 shrink-0">
+                                    بستن
                                 </button>
                             </>
                         ) : (
                             <>
-                                <h2 className="text-xl font-bold shrink-0">Saved Sets</h2>
+                                <div className="flex items-center gap-3 shrink-0">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-500">
+                                        <FiFolder size={20}/>
+                                    </div>
+                                    <h2 className="text-lg font-black text-[#1a2151]">مجموعه‌های ذخیره شده</h2>
+                                </div>
 
                                 <div className="flex flex-col gap-2 overflow-y-auto flex-1">
                                     {savedSets.length === 0 ? (
-                                        <div className="text-gray-500 text-sm text-center py-8">
-                                            No sets saved yet
-                                        </div>
+                                        <div className="text-slate-400 text-sm text-center py-8">هنوز مجموعه‌ای ذخیره نشده</div>
                                     ) : (
                                         savedSets.map((set) => (
                                             <div key={set.id} onClick={() => loadSet(set)}
-                                                className="bg-gray-800 rounded-lg px-4 py-3 cursor-pointer hover:bg-gray-700 transition-colors flex items-center justify-between group">
+                                                className="rounded-2xl bg-slate-50 px-4 py-3 cursor-pointer hover:bg-emerald-50 transition-colors flex items-center justify-between group border border-slate-100 hover:border-emerald-200">
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="font-medium truncate">{set.title}</div>
-                                                    <div className="text-gray-400 text-xs">
-                                                        {set.words.length} words • {set.gridSize}x{set.gridSize} • {new Date(set.createdAt).toLocaleDateString()}
+                                                    <div className="font-bold text-[#1a2151] truncate">{set.title}</div>
+                                                    <div className="text-slate-400 text-xs mt-0.5">
+                                                        {set.words.length} کلمه • {set.gridSize}×{set.gridSize} • {new Date(set.createdAt).toLocaleDateString("fa-IR")}
                                                     </div>
                                                 </div>
-                                                <button onClick={(e) => deleteSet(set.id, e)} className="text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
-                                                    <FiTrash2 size={16} />
+                                                <button onClick={(e) => deleteSet(set.id, e)} className="text-red-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
+                                                    <FiTrash2 size={16}/>
                                                 </button>
                                             </div>
                                         ))
@@ -387,11 +389,11 @@ export default function WordSquare() {
                                 </div>
 
                                 <div className="flex gap-2 shrink-0">
-                                    <button onClick={() => setShowSavedSets(false)} className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm">
-                                        Back
+                                    <button onClick={() => setShowSavedSets(false)} className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-sm font-bold text-white transition-colors">
+                                        بازگشت
                                     </button>
-                                    <button onClick={() => setShowModal(false)} className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
-                                        Close
+                                    <button onClick={() => setShowModal(false)} className="flex-1 py-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl text-sm font-bold text-slate-500 transition-colors border border-slate-100">
+                                        بستن
                                     </button>
                                 </div>
                             </>
