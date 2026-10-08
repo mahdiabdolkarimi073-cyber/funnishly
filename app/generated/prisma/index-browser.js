@@ -137,6 +137,7 @@ exports.Prisma.PackageScalarFieldEnum = {
   price1m: 'price1m',
   price3m: 'price3m',
   price6m: 'price6m',
+  price1y: 'price1y',
   options: 'options'
 };
 
@@ -199,7 +200,8 @@ exports.UserRole = exports.$Enums.UserRole = {
 exports.PackageDuration = exports.$Enums.PackageDuration = {
   MONTH1: 'MONTH1',
   MONTH3: 'MONTH3',
-  MONTH6: 'MONTH6'
+  MONTH6: 'MONTH6',
+  MONTH12: 'MONTH12'
 };
 
 exports.TransactionStatus = exports.$Enums.TransactionStatus = {

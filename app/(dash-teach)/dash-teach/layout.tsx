@@ -70,7 +70,9 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
         id, label, description, icon, color, bg
     });
 
-    const menuItems: MenuItem[] = [
+    const allowedPages = user?.activePackage?.package?.options ?? [];
+
+    const allMenuItems: MenuItem[] = [
         mk("dashboard", "خانه", "صفحه اصلی پنل تدریس", <MdDashboard size={20}/>, "#3b82f6", "#eff6ff"),
         mk("timer", "تایمر کلاس", "مدیریت زمان فعالیت‌ها", <MdTimer size={20}/>, "#3b82f6", "#eff6ff"),
         mk("wheel", "گردونه شانس", "انتخاب تصادفی دانش‌آموز یا فعالیت", <MdDonutLarge size={20}/>, "#a855f7", "#faf5ff"),
@@ -80,6 +82,10 @@ export default function DashboardLayout({children}: { children?: ReactNode }) {
         mk("col-words", "تطبیق کلمات", "اتصال کلمات مرتبط در ستون‌ها", <MdViewColumn size={20}/>, "#06b6d4", "#ecfeff"),
         mk("quiz", "کوییز", "ساخت و اجرای کوییز تعاملی", <MdQuiz size={20}/>, "#ec4899", "#fdf2f8"),
     ];
+
+    const menuItems: MenuItem[] = allMenuItems.filter(
+        (item) => item.id === "dashboard" || allowedPages.includes(item.id)
+    );
 
     const handleNavigate = (id: string) => {
         setActivePage(id);

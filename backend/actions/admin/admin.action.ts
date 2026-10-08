@@ -106,6 +106,7 @@ export async function createPackage(data: {
     price1m: number;
     price3m: number;
     price6m: number;
+    price1y: number;
     options: string[];
 }) {
     const admin = await requireAdmin();
@@ -120,6 +121,7 @@ export async function createPackage(data: {
             price1m: data.price1m,
             price3m: data.price3m,
             price6m: data.price6m,
+            price1y: data.price1y,
             options: data.options,
         },
     });
@@ -135,6 +137,7 @@ export async function updatePackage(
         price1m: number;
         price3m: number;
         price6m: number;
+        price1y: number;
         options: string[];
     }
 ) {
@@ -151,6 +154,7 @@ export async function updatePackage(
             price1m: data.price1m,
             price3m: data.price3m,
             price6m: data.price6m,
+            price1y: data.price1y,
             options: data.options,
         },
     });

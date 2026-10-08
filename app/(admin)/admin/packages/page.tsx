@@ -14,6 +14,13 @@ import {
     MdDelete,
     MdClose,
     MdCheck,
+    MdTimer,
+    MdDonutLarge,
+    MdCasino,
+    MdGridOn,
+    MdViewColumn,
+    MdQuiz,
+    MdSortByAlpha,
 } from "react-icons/md";
 import { toast } from "react-toastify";
 
@@ -23,8 +30,23 @@ interface PackageForm {
     price1m: number;
     price3m: number;
     price6m: number;
+    price1y: number;
     options: string[];
 }
+
+const AVAILABLE_PAGES = [
+    { id: "timer", label: "تایمر کلاس", icon: <MdTimer size={18} /> },
+    { id: "wheel", label: "گردونه شانس", icon: <MdDonutLarge size={18} /> },
+    { id: "dice", label: "تاس", icon: <MdCasino size={18} /> },
+    { id: "word-square", label: "مربع کلمات", icon: <MdGridOn size={18} /> },
+    { id: "incomplete-sentence", label: "مرتب‌سازی جمله", icon: <MdSortByAlpha size={18} /> },
+    { id: "col-words", label: "تطبیق کلمات", icon: <MdViewColumn size={18} /> },
+    { id: "quiz", label: "کوییز", icon: <MdQuiz size={18} /> },
+];
+
+const PAGE_LABELS: Record<string, string> = Object.fromEntries(
+    AVAILABLE_PAGES.map((p) => [p.id, p.label])
+);
 
 const emptyForm: PackageForm = {
     title: "",
@@ -32,6 +54,7 @@ const emptyForm: PackageForm = {
     price1m: 0,
     price3m: 0,
     price6m: 0,
+    price1y: 0,
     options: [],
 };
 
@@ -41,13 +64,11 @@ export default function AdminPackages() {
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [form, setForm] = useState<PackageForm>(emptyForm);
-    const [optionInput, setOptionInput] = useState("");
     const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
     function openCreate() {
         setForm(emptyForm);
         setEditingId(null);
-        setOptionInput("");
         setShowModal(true);
     }
 
@@ -58,22 +79,20 @@ export default function AdminPackages() {
             price1m: pkg.price1m,
             price3m: pkg.price3m,
             price6m: pkg.price6m,
+            price1y: pkg.price1y ?? 0,
             options: [...pkg.options],
         });
         setEditingId(pkg.id);
-        setOptionInput("");
         setShowModal(true);
     }
 
-    function addOption() {
-        const v = optionInput.trim();
-        if (!v || form.options.includes(v)) return;
-        setForm({ ...form, options: [...form.options, v] });
-        setOptionInput("");
-    }
-
-    function removeOption(opt: string) {
-        setForm({ ...form, options: form.options.filter((o) => o !== opt) });
+    function togglePage(pageId: string) {
+        setForm((prev) => ({
+            ...prev,
+            options: prev.options.includes(pageId)
+                ? prev.options.filter((o) => o !== pageId)
+                : [...prev.options, pageId],
+        }));
     }
 
     function handleSubmit() {
@@ -195,11 +214,12 @@ export default function AdminPackages() {
                         </div>
 
                         {/* Prices */}
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-4 gap-2">
                             {[
                                 { label: "۱ ماهه", price: pkg.price1m },
                                 { label: "۳ ماهه", price: pkg.price3m },
                                 { label: "۶ ماهه", price: pkg.price6m },
+                                { label: "۱ ساله", price: pkg.price1y ?? 0 },
                             ].map((d) => (
                                 <div
                                     key={d.label}
@@ -221,7 +241,7 @@ export default function AdminPackages() {
                                     key={i}
                                     className="bg-sky-50 text-sky-700 text-xs px-2.5 py-1 rounded-lg border border-sky-100"
                                 >
-                                    {opt}
+                                    {PAGE_LABELS[opt] ?? opt}
                                 </span>
                             ))}
                         </div>
@@ -283,7 +303,7 @@ export default function AdminPackages() {
                         {/* Prices */}
                         <div>
                             <label className="text-xs font-medium text-slate-600 mb-1.5 block">قیمت‌ها (تومان)</label>
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 <div>
                                     <span className="text-[10px] text-slate-400">۱ ماهه</span>
                                     <input
@@ -314,47 +334,48 @@ export default function AdminPackages() {
                                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-sky-400 mt-1"
                                     />
                                 </div>
+                                <div>
+                                    <span className="text-[10px] text-slate-400">۱ ساله</span>
+                                    <input
+                                        type="number"
+                                        value={form.price1y || ""}
+                                        onChange={(e) => setForm({ ...form, price1y: parseInt(e.target.value) || 0 })}
+                                        placeholder="0"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-sky-400 mt-1"
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        {/* Options */}
+                        {/* Page Access Checkboxes */}
                         <div>
-                            <label className="text-xs font-medium text-slate-600 mb-1.5 block">
-                                امکانات پکیج
+                            <label className="text-xs font-medium text-slate-600 mb-2 block">
+                                صفحات مجاز برای این پکیج
                             </label>
-                            <div className="flex gap-2 mb-2">
-                                <input
-                                    value={optionInput}
-                                    onChange={(e) => setOptionInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            e.preventDefault();
-                                            addOption();
-                                        }
-                                    }}
-                                    placeholder="مثال: تایمر، گردونه..."
-                                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-sky-400 min-w-0"
-                                />
-                                <button
-                                    onClick={addOption}
-                                    type="button"
-                                    className="bg-slate-700 text-white px-3 rounded-xl text-sm hover:bg-slate-800 shrink-0 flex items-center"
-                                >
-                                    <MdAdd size={18} />
-                                </button>
-                            </div>
-                            <div className="flex flex-wrap gap-1.5">
-                                {form.options.map((opt) => (
-                                    <span
-                                        key={opt}
-                                        className="flex items-center gap-1.5 bg-sky-50 text-sky-700 text-xs px-2.5 py-1.5 rounded-lg border border-sky-100"
-                                    >
-                                        {opt}
-                                        <button onClick={() => removeOption(opt)} className="text-sky-400 hover:text-red-500">
-                                            <MdClose size={14} />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {AVAILABLE_PAGES.map((page) => {
+                                    const checked = form.options.includes(page.id);
+                                    return (
+                                        <button
+                                            key={page.id}
+                                            type="button"
+                                            onClick={() => togglePage(page.id)}
+                                            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-sm transition ${
+                                                checked
+                                                    ? "border-sky-300 bg-sky-50 text-sky-700"
+                                                    : "border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+                                            }`}
+                                        >
+                                            <span className={`flex h-5 w-5 items-center justify-center rounded-md border shrink-0 transition ${
+                                                checked ? "border-sky-500 bg-sky-500 text-white" : "border-slate-300"
+                                            }`}>
+                                                {checked && <MdCheck size={14} />}
+                                            </span>
+                                            <span className="text-slate-400">{page.icon}</span>
+                                            <span className="font-medium">{page.label}</span>
                                         </button>
-                                    </span>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
 

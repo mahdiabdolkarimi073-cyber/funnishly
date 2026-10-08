@@ -2,7 +2,7 @@
 
 import prisma from "@/backend/module/Prisma";
 import {User} from "@/types/Types";
-import {Package, Prisma} from "@/app/generated/prisma";
+import {Package, Prisma, UserPackage} from "@/app/generated/prisma";
 import {cookies} from "next/headers";
 
 
@@ -27,7 +27,7 @@ export async function getUserFromCookie(include?: Prisma.UserInclude): Promise<U
     return await getUserByToken(token!, include)
 }
 
-export async function getUserFromCookieWithAllData(): Promise<User & { activePackage: Package } | null> {
-    return await getUserFromCookie({activePackage: true}) as User & { activePackage: Package };
+export async function getUserFromCookieWithAllData(): Promise<User & { activePackage: UserPackage & { package: Package } } | null> {
+    return await getUserFromCookie({activePackage: { include: { package: true } }}) as User & { activePackage: UserPackage & { package: Package } };
 
 }

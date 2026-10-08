@@ -22,6 +22,8 @@ export default function DashTeachHome() {
     const router = useRouter();
     const { data: user, status } = useServerAction(getUserFromCookieWithAllData);
 
+    const allowedPages = user?.activePackage?.package?.options ?? [];
+
     const tools = [
         {
             id: "timer",
@@ -114,7 +116,7 @@ export default function DashTeachHome() {
         { id: "timer", label: "تایمر کلاس", icon: <MdTimer size={22} />, color: "#3b82f6", bg: "#eff6ff" },
         { id: "dice", label: "تاس", icon: <GiDiceSixFacesFive size={22} />, color: "#f59e0b", bg: "#fffbeb" },
         { id: "quiz", label: "ساخت کوییز", icon: <MdQuiz size={22} />, color: "#ec4899", bg: "#fdf2f8" },
-    ];
+    ].filter((a) => allowedPages.includes(a.id));
 
     const isLoading = status === "loading";
 
@@ -201,7 +203,7 @@ export default function DashTeachHome() {
                 </div>
 
                 <div className="grid auto-rows-[170px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-                    {tools.map((tool, idx) => {
+                    {tools.filter((t) => allowedPages.includes(t.id)).map((tool, idx) => {
                         const sizeClass =
                             tool.size === "large" ? "lg:col-span-2 lg:row-span-2" :
                             tool.size === "wide" ? "lg:col-span-2" : "";
@@ -246,7 +248,7 @@ export default function DashTeachHome() {
             </div>
 
             {/* ===================== TEACHER CALL-TO-ACTION ===================== */}
-            <div className="fn-fade-up fn-delay-3">
+            {allowedPages.includes("quiz") && <div className="fn-fade-up fn-delay-3">
                 <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 border border-white p-6 md:p-8 shadow-[0_8px_30px_rgba(16,185,129,.08)]">
                     <div className="pointer-events-none absolute -left-10 -top-10 h-32 w-32 rounded-full bg-emerald-200/30 blur-2xl"/>
                     <div className="pointer-events-none absolute -right-10 -bottom-10 h-28 w-28 rounded-full bg-purple-200/25 blur-2xl"/>
@@ -297,10 +299,10 @@ export default function DashTeachHome() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>}
 
             {/* ===================== QUIZ BUILDER HIGHLIGHT ===================== */}
-            <div className="fn-fade-up fn-delay-4">
+            {allowedPages.includes("quiz") && <div className="fn-fade-up fn-delay-4">
                 <div className="relative overflow-hidden rounded-[24px] border border-pink-100 bg-gradient-to-br from-pink-50/80 via-white to-purple-50/50 p-6 shadow-[0_8px_30px_rgba(236,72,153,.08)] fn-card-hover hover:shadow-[0_12px_40px_rgba(236,72,153,.14)]">
                     <div className="pointer-events-none absolute -left-10 -top-10 h-28 w-28 rounded-full bg-pink-50/80"/>
                     <div className="pointer-events-none absolute -right-12 -bottom-12 h-32 w-32 rounded-full bg-purple-50/60"/>
@@ -326,7 +328,7 @@ export default function DashTeachHome() {
                         </Button>
                     </div>
                 </div>
-            </div>
+            </div>}
 
             {/* ===================== EMPTY RECENT ACTIVITIES ===================== */}
             <div className="fn-fade-up fn-delay-5">
@@ -346,7 +348,7 @@ export default function DashTeachHome() {
                         <p className="text-[#1a2151] font-bold text-base">هنوز فعالیتی ایجاد نکرده‌ای</p>
                         <p className="text-slate-400 text-sm max-w-xs">اولین فعالیت کلاسی خودت را بساز و کلاس را زنده کن.</p>
                         <Button
-                            onClick={() => router.push("/dash-teach/wheel")}
+                            onClick={() => router.push(allowedPages.includes("wheel") ? "/dash-teach/wheel" : `/dash-teach/${allowedPages[0] ?? ""}`)}
                             radius="xl"
                             size="md"
                             rightSection={<HiArrowLeft size={16}/>}

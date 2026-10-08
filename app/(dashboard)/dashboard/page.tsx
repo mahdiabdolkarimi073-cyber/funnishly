@@ -6,15 +6,18 @@ import { MdPhone, MdPerson, MdSave, MdWorkspacePremium, MdSecurity } from "react
 import { HiCheck, HiSparkles, HiArrowLeft } from "react-icons/hi";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { GiDiceSixFacesFive } from "react-icons/gi";
-import { getUserFromCookie } from "@/backend/actions/user/getUser.action";
+import { getUserFromCookie, getUserFromCookieWithAllData } from "@/backend/actions/user/getUser.action";
 import { useServerAction } from "@/hooks/useServerAction";
 import { User } from "@/types/Types";
+import { Package } from "@/app/generated/prisma";
 import updateUserAction from "@/backend/actions/user/updateUser.action";
 import { useRouter } from "next/navigation";
 
 export default function UserProfile() {
     const router = useRouter();
     const { data, status, error } = useServerAction<User | null>(getUserFromCookie);
+    const { data: fullUser } = useServerAction<(User & { activePackage: Package | null }) | null>(getUserFromCookieWithAllData);
+    const hasPackage = !!fullUser?.activePackage;
     const [form, setForm] = useState({ firstName: "", lastName: "" });
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -136,7 +139,7 @@ export default function UserProfile() {
 
             {/* ===================== GO TO TEACHING PANEL BANNER ===================== */}
             <button
-                onClick={() => router.push("/dash-teach")}
+                onClick={() => router.push(hasPackage ? "/dash-teach" : "/dashboard/plan")}
                 className="group relative w-full overflow-hidden rounded-[28px] border border-white bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 p-6 md:p-8 text-right shadow-[0_8px_30px_rgba(16,185,129,.08)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(16,185,129,.14)] fn-card-hover fn-fade-up fn-delay-2"
             >
                 <div className="pointer-events-none absolute -left-10 -top-10 h-32 w-32 rounded-full bg-emerald-200/30 blur-2xl"/>
@@ -151,13 +154,19 @@ export default function UserProfile() {
                             <FaChalkboardTeacher size={30}/>
                         </div>
                         <div className="min-w-0">
-                            <h3 className="font-black text-lg md:text-xl text-[#1a2151]">رفتن به پنل تدریس 🚀</h3>
-                            <p className="text-slate-500 text-sm mt-1">ابزارهای تعاملی کلاس را شروع کنید — تایمر، گردونه، تاس، کوییز و بیشتر</p>
+                            <h3 className="font-black text-lg md:text-xl text-[#1a2151]">
+                                {hasPackage ? "رفتن به پنل تدریس 🚀" : "خرید پکیج برای دسترسی به پنل تدریس 🔒"}
+                            </h3>
+                            <p className="text-slate-500 text-sm mt-1">
+                                {hasPackage
+                                    ? "ابزارهای تعاملی کلاس را شروع کنید — تایمر، گردونه، تاس، کوییز و بیشتر"
+                                    : "برای استفاده از ابزارهای تعاملی کلاس، ابتدا یک پکیج تهیه کنید"}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                         <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-700 transition-all duration-300 group-hover:bg-emerald-200">
-                            شروع فعالیت
+                            {hasPackage ? "شروع فعالیت" : "مشاهده پلن‌ها"}
                         </span>
                         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-emerald-500 shadow-md transition-all duration-300 group-hover:-translate-x-1">
                             <HiArrowLeft size={20}/>

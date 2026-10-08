@@ -32,6 +32,7 @@ model Package {
   price1m     Int
   price3m     Int
   price6m     Int
+  price1y     Int            @default(0)
   options     String[]
   purchases   UserPackage[]
   transactions Transaction[]
@@ -51,6 +52,7 @@ enum PackageDuration {
   MONTH1
   MONTH3
   MONTH6
+  MONTH12
 }
 
 model Transaction {

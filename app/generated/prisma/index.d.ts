@@ -54,7 +54,8 @@ export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 export const PackageDuration: {
   MONTH1: 'MONTH1',
   MONTH3: 'MONTH3',
-  MONTH6: 'MONTH6'
+  MONTH6: 'MONTH6',
+  MONTH12: 'MONTH12'
 };
 
 export type PackageDuration = (typeof PackageDuration)[keyof typeof PackageDuration]
@@ -2535,12 +2536,14 @@ export namespace Prisma {
     price1m: number | null
     price3m: number | null
     price6m: number | null
+    price1y: number | null
   }
 
   export type PackageSumAggregateOutputType = {
     price1m: number | null
     price3m: number | null
     price6m: number | null
+    price1y: number | null
   }
 
   export type PackageMinAggregateOutputType = {
@@ -2550,6 +2553,7 @@ export namespace Prisma {
     price1m: number | null
     price3m: number | null
     price6m: number | null
+    price1y: number | null
   }
 
   export type PackageMaxAggregateOutputType = {
@@ -2559,6 +2563,7 @@ export namespace Prisma {
     price1m: number | null
     price3m: number | null
     price6m: number | null
+    price1y: number | null
   }
 
   export type PackageCountAggregateOutputType = {
@@ -2568,6 +2573,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y: number
     options: number
     _all: number
   }
@@ -2577,12 +2583,14 @@ export namespace Prisma {
     price1m?: true
     price3m?: true
     price6m?: true
+    price1y?: true
   }
 
   export type PackageSumAggregateInputType = {
     price1m?: true
     price3m?: true
     price6m?: true
+    price1y?: true
   }
 
   export type PackageMinAggregateInputType = {
@@ -2592,6 +2600,7 @@ export namespace Prisma {
     price1m?: true
     price3m?: true
     price6m?: true
+    price1y?: true
   }
 
   export type PackageMaxAggregateInputType = {
@@ -2601,6 +2610,7 @@ export namespace Prisma {
     price1m?: true
     price3m?: true
     price6m?: true
+    price1y?: true
   }
 
   export type PackageCountAggregateInputType = {
@@ -2610,6 +2620,7 @@ export namespace Prisma {
     price1m?: true
     price3m?: true
     price6m?: true
+    price1y?: true
     options?: true
     _all?: true
   }
@@ -2707,6 +2718,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y: number
     options: string[]
     _count: PackageCountAggregateOutputType | null
     _avg: PackageAvgAggregateOutputType | null
@@ -2736,6 +2748,7 @@ export namespace Prisma {
     price1m?: boolean
     price3m?: boolean
     price6m?: boolean
+    price1y?: boolean
     options?: boolean
     purchases?: boolean | Package$purchasesArgs<ExtArgs>
     transactions?: boolean | Package$transactionsArgs<ExtArgs>
@@ -2749,6 +2762,7 @@ export namespace Prisma {
     price1m?: boolean
     price3m?: boolean
     price6m?: boolean
+    price1y?: boolean
     options?: boolean
   }, ExtArgs["result"]["package"]>
 
@@ -2759,6 +2773,7 @@ export namespace Prisma {
     price1m?: boolean
     price3m?: boolean
     price6m?: boolean
+    price1y?: boolean
     options?: boolean
   }, ExtArgs["result"]["package"]>
 
@@ -2769,10 +2784,11 @@ export namespace Prisma {
     price1m?: boolean
     price3m?: boolean
     price6m?: boolean
+    price1y?: boolean
     options?: boolean
   }
 
-  export type PackageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "price1m" | "price3m" | "price6m" | "options", ExtArgs["result"]["package"]>
+  export type PackageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "price1m" | "price3m" | "price6m" | "price1y" | "options", ExtArgs["result"]["package"]>
   export type PackageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     purchases?: boolean | Package$purchasesArgs<ExtArgs>
     transactions?: boolean | Package$transactionsArgs<ExtArgs>
@@ -2794,6 +2810,7 @@ export namespace Prisma {
       price1m: number
       price3m: number
       price6m: number
+      price1y: number
       options: string[]
     }, ExtArgs["result"]["package"]>
     composites: {}
@@ -3226,6 +3243,7 @@ export namespace Prisma {
     readonly price1m: FieldRef<"Package", 'Int'>
     readonly price3m: FieldRef<"Package", 'Int'>
     readonly price6m: FieldRef<"Package", 'Int'>
+    readonly price1y: FieldRef<"Package", 'Int'>
     readonly options: FieldRef<"Package", 'String[]'>
   }
     
@@ -6994,6 +7012,7 @@ export namespace Prisma {
     price1m: 'price1m',
     price3m: 'price3m',
     price6m: 'price6m',
+    price1y: 'price1y',
     options: 'options'
   };
 
@@ -7291,6 +7310,7 @@ export namespace Prisma {
     price1m?: IntFilter<"Package"> | number
     price3m?: IntFilter<"Package"> | number
     price6m?: IntFilter<"Package"> | number
+    price1y?: IntFilter<"Package"> | number
     options?: StringNullableListFilter<"Package">
     purchases?: UserPackageListRelationFilter
     transactions?: TransactionListRelationFilter
@@ -7303,6 +7323,7 @@ export namespace Prisma {
     price1m?: SortOrder
     price3m?: SortOrder
     price6m?: SortOrder
+    price1y?: SortOrder
     options?: SortOrder
     purchases?: UserPackageOrderByRelationAggregateInput
     transactions?: TransactionOrderByRelationAggregateInput
@@ -7318,6 +7339,7 @@ export namespace Prisma {
     price1m?: IntFilter<"Package"> | number
     price3m?: IntFilter<"Package"> | number
     price6m?: IntFilter<"Package"> | number
+    price1y?: IntFilter<"Package"> | number
     options?: StringNullableListFilter<"Package">
     purchases?: UserPackageListRelationFilter
     transactions?: TransactionListRelationFilter
@@ -7330,6 +7352,7 @@ export namespace Prisma {
     price1m?: SortOrder
     price3m?: SortOrder
     price6m?: SortOrder
+    price1y?: SortOrder
     options?: SortOrder
     _count?: PackageCountOrderByAggregateInput
     _avg?: PackageAvgOrderByAggregateInput
@@ -7348,6 +7371,7 @@ export namespace Prisma {
     price1m?: IntWithAggregatesFilter<"Package"> | number
     price3m?: IntWithAggregatesFilter<"Package"> | number
     price6m?: IntWithAggregatesFilter<"Package"> | number
+    price1y?: IntWithAggregatesFilter<"Package"> | number
     options?: StringNullableListFilter<"Package">
   }
 
@@ -7629,6 +7653,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y?: number
     options?: PackageCreateoptionsInput | string[]
     purchases?: UserPackageCreateNestedManyWithoutPackageInput
     transactions?: TransactionCreateNestedManyWithoutPackageInput
@@ -7641,6 +7666,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y?: number
     options?: PackageCreateoptionsInput | string[]
     purchases?: UserPackageUncheckedCreateNestedManyWithoutPackageInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutPackageInput
@@ -7653,6 +7679,7 @@ export namespace Prisma {
     price1m?: IntFieldUpdateOperationsInput | number
     price3m?: IntFieldUpdateOperationsInput | number
     price6m?: IntFieldUpdateOperationsInput | number
+    price1y?: IntFieldUpdateOperationsInput | number
     options?: PackageUpdateoptionsInput | string[]
     purchases?: UserPackageUpdateManyWithoutPackageNestedInput
     transactions?: TransactionUpdateManyWithoutPackageNestedInput
@@ -7665,6 +7692,7 @@ export namespace Prisma {
     price1m?: IntFieldUpdateOperationsInput | number
     price3m?: IntFieldUpdateOperationsInput | number
     price6m?: IntFieldUpdateOperationsInput | number
+    price1y?: IntFieldUpdateOperationsInput | number
     options?: PackageUpdateoptionsInput | string[]
     purchases?: UserPackageUncheckedUpdateManyWithoutPackageNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutPackageNestedInput
@@ -7677,6 +7705,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y?: number
     options?: PackageCreateoptionsInput | string[]
   }
 
@@ -7687,6 +7716,7 @@ export namespace Prisma {
     price1m?: IntFieldUpdateOperationsInput | number
     price3m?: IntFieldUpdateOperationsInput | number
     price6m?: IntFieldUpdateOperationsInput | number
+    price1y?: IntFieldUpdateOperationsInput | number
     options?: PackageUpdateoptionsInput | string[]
   }
 
@@ -7697,6 +7727,7 @@ export namespace Prisma {
     price1m?: IntFieldUpdateOperationsInput | number
     price3m?: IntFieldUpdateOperationsInput | number
     price6m?: IntFieldUpdateOperationsInput | number
+    price1y?: IntFieldUpdateOperationsInput | number
     options?: PackageUpdateoptionsInput | string[]
   }
 
@@ -8025,6 +8056,7 @@ export namespace Prisma {
     price1m?: SortOrder
     price3m?: SortOrder
     price6m?: SortOrder
+    price1y?: SortOrder
     options?: SortOrder
   }
 
@@ -8032,6 +8064,7 @@ export namespace Prisma {
     price1m?: SortOrder
     price3m?: SortOrder
     price6m?: SortOrder
+    price1y?: SortOrder
   }
 
   export type PackageMaxOrderByAggregateInput = {
@@ -8041,6 +8074,7 @@ export namespace Prisma {
     price1m?: SortOrder
     price3m?: SortOrder
     price6m?: SortOrder
+    price1y?: SortOrder
   }
 
   export type PackageMinOrderByAggregateInput = {
@@ -8050,12 +8084,14 @@ export namespace Prisma {
     price1m?: SortOrder
     price3m?: SortOrder
     price6m?: SortOrder
+    price1y?: SortOrder
   }
 
   export type PackageSumOrderByAggregateInput = {
     price1m?: SortOrder
     price3m?: SortOrder
     price6m?: SortOrder
+    price1y?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -9167,6 +9203,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y?: number
     options?: PackageCreateoptionsInput | string[]
     transactions?: TransactionCreateNestedManyWithoutPackageInput
   }
@@ -9178,6 +9215,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y?: number
     options?: PackageCreateoptionsInput | string[]
     transactions?: TransactionUncheckedCreateNestedManyWithoutPackageInput
   }
@@ -9240,6 +9278,7 @@ export namespace Prisma {
     price1m?: IntFieldUpdateOperationsInput | number
     price3m?: IntFieldUpdateOperationsInput | number
     price6m?: IntFieldUpdateOperationsInput | number
+    price1y?: IntFieldUpdateOperationsInput | number
     options?: PackageUpdateoptionsInput | string[]
     transactions?: TransactionUpdateManyWithoutPackageNestedInput
   }
@@ -9251,6 +9290,7 @@ export namespace Prisma {
     price1m?: IntFieldUpdateOperationsInput | number
     price3m?: IntFieldUpdateOperationsInput | number
     price6m?: IntFieldUpdateOperationsInput | number
+    price1y?: IntFieldUpdateOperationsInput | number
     options?: PackageUpdateoptionsInput | string[]
     transactions?: TransactionUncheckedUpdateManyWithoutPackageNestedInput
   }
@@ -9291,6 +9331,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y?: number
     options?: PackageCreateoptionsInput | string[]
     purchases?: UserPackageCreateNestedManyWithoutPackageInput
   }
@@ -9302,6 +9343,7 @@ export namespace Prisma {
     price1m: number
     price3m: number
     price6m: number
+    price1y?: number
     options?: PackageCreateoptionsInput | string[]
     purchases?: UserPackageUncheckedCreateNestedManyWithoutPackageInput
   }
@@ -9364,6 +9406,7 @@ export namespace Prisma {
     price1m?: IntFieldUpdateOperationsInput | number
     price3m?: IntFieldUpdateOperationsInput | number
     price6m?: IntFieldUpdateOperationsInput | number
+    price1y?: IntFieldUpdateOperationsInput | number
     options?: PackageUpdateoptionsInput | string[]
     purchases?: UserPackageUpdateManyWithoutPackageNestedInput
   }
@@ -9375,6 +9418,7 @@ export namespace Prisma {
     price1m?: IntFieldUpdateOperationsInput | number
     price3m?: IntFieldUpdateOperationsInput | number
     price6m?: IntFieldUpdateOperationsInput | number
+    price1y?: IntFieldUpdateOperationsInput | number
     options?: PackageUpdateoptionsInput | string[]
     purchases?: UserPackageUncheckedUpdateManyWithoutPackageNestedInput
   }
