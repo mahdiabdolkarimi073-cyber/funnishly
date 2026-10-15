@@ -23,7 +23,6 @@ import {
 } from "react-icons/hi";
 import {
     MdTimer,
-    MdDonutLarge,
     MdGridOn,
     MdSortByAlpha,
     MdViewColumn,
@@ -254,163 +253,113 @@ export default async function HomePage() {
 
                         {/* LARGE: Spinner Wheel */}
                         <div className="group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_30px_rgba(168,85,247,.1)] fn-card-hover hover:shadow-[0_16px_50px_rgba(168,85,247,.18)] lg:col-span-2 lg:row-span-2 fn-fade-up fn-delay-1" style={{ minHeight: "100%" }}>
-                            <div className="pointer-events-none absolute -left-10 -top-10 h-32 w-32 rounded-full bg-purple-50/80" />
-                            <div className="pointer-events-none absolute -right-12 -bottom-12 h-36 w-36 rounded-full bg-pink-50/60" />
+                            <Image
+                                src="/images/interactive/Spinning_Wheel.png"
+                                alt="Wheel of Fortune — گردونه"
+                                fit="contain"
+                                width={1125}
+                                height={2000}
+                                className="relative mx-auto h-33 w-full object-contain"
+                            />
 
-                            {/* visual preview: spinner wheel */}
-                            <div className="relative flex items-start justify-between">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-50 text-purple-500 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
-                                    <MdDonutLarge size={36} />
-                                </div>
-                                <span className="rounded-full bg-purple-50 px-3 py-1 text-[11px] font-bold text-purple-500">تعاملی</span>
-                            </div>
-
-                            {/* mini spinner preview */}
-                            <div className="relative my-2 flex items-center gap-4">
-                                <div className="fn-spin-slow h-24 w-24 rounded-full border-[10px] border-purple-200 border-t-purple-500 border-r-pink-400 border-b-amber-300 border-l-emerald-400" style={{ minHeight: 96 }} />
-                                <div className="flex-1">
-                                    <Title order={3} className="font-black text-2xl text-[#1a2151]">Wheel of Fortune</Title>
-                                    <Text size="md" className="mt-1 leading-7 text-slate-500">گردونه</Text>
-                                </div>
-                            </div>
-
-                            <div className="relative flex items-center justify-between">
-                                <Text size="sm" className="text-purple-500">۸ بخش قابل تنظیم</Text>
-                                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-50 text-purple-500 transition-all duration-300 group-hover:-translate-x-1"><HiArrowLeft size={16} /></span>
+                            <div className="relative">
+                                <Title order={3} className="font-black text-2xl text-[#1a2151]">Wheel of Fortune</Title>
                             </div>
                         </div>
 
                         {/* SMALL: Timer */}
                         <div className="group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_30px_rgba(59,130,246,.1)] fn-card-hover hover:shadow-[0_16px_50px_rgba(59,130,246,.16)] fn-fade-up fn-delay-2">
-                            <div className="pointer-events-none absolute -left-8 -top-8 h-24 w-24 rounded-full bg-blue-50/80" />
-                            <div className="relative flex items-start justify-between">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-500 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                                    <MdTimer size={28} />
-                                </div>
-                            </div>
-                            {/* mini timer preview */}
-                            <div className="relative flex items-center gap-3">
-                                <div className="relative flex h-14 w-14 items-center justify-center rounded-full border-4 border-blue-100 border-t-blue-500">
-                                    <span className="text-xs font-bold text-blue-600">۰۲:۳۵</span>
-                                </div>
-                                <div>
-                                    <Title order={5} className="font-black text-lg text-[#1a2151]">Timer</Title>
-                                    <Text size="sm" className="text-slate-500 line-clamp-1">تایمر</Text>
-                                </div>
+                            <Image
+                                src="/images/interactive/Timer_(1).png"
+                                alt="Timer — تایمر"
+                                fit="contain"
+                                width={1125}
+                                height={2000}
+                                className="relative mx-auto h-35 w-full object-contain"
+                            />
+                            <div className="relative">
+                                <Title order={5} className="font-black text-lg text-[#1a2151]">Timer</Title>
+                                <Text size="sm" className="text-slate-600 line-clamp-1">تایمر</Text>
                             </div>
                         </div>
 
                         {/* SMALL: Dice */}
                         <div className="group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_30px_rgba(245,158,11,.1)] fn-card-hover hover:shadow-[0_16px_50px_rgba(245,158,11,.16)] fn-fade-up fn-delay-3">
-                            <div className="pointer-events-none absolute -left-8 -top-8 h-24 w-24 rounded-full bg-amber-50/80" />
-                            <div className="relative flex items-start justify-between">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-500 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
-                                    <GiDiceSixFacesFive size={28} />
-                                </div>
-                            </div>
-                            {/* mini dice preview */}
-                            <div className="relative flex items-center gap-3">
-                                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-3xl font-black text-amber-600 shadow-inner ring-2 ring-amber-200">۵</div>
-                                <div>
-                                    <Title order={5} className="font-black text-lg text-[#1a2151]">Dice</Title>
-                                    <Text size="sm" className="text-slate-500 line-clamp-1">تاس</Text>
-                                </div>
+                            <Image
+                                src="/images/interactive/Dice.png"
+                                alt="Timer — تایمر"
+                                fit="contain"
+                                width={1125}
+                                height={2000}
+                                className="relative mx-auto h-35 w-full object-contain"
+                            />
+                            <div className="relative">
+                                <Title order={5} className="font-black text-lg text-[#1a2151]">Dice</Title>
+                                <Text size="sm" className="text-slate-500 line-clamp-1">تاس</Text>
                             </div>
                         </div>
 
                         {/* WIDE: Word Square */}
                         <div className="group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_30px_rgba(16,185,129,.1)] fn-card-hover hover:shadow-[0_16px_50px_rgba(16,185,129,.16)] lg:col-span-2 fn-fade-up fn-delay-2">
-                            <div className="pointer-events-none absolute -left-10 -top-10 h-28 w-28 rounded-full bg-emerald-50/80" />
-                            <div className="relative flex items-start justify-between">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                                    <MdGridOn size={28} />
-                                </div>
-                                <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-500">بازی کلمات</span>
-                            </div>
-                            {/* mini word grid preview */}
-                            <div className="relative flex items-center gap-4">
-                                <div className="grid grid-cols-3 gap-1">
-                                    {["س", "ا", "ب", "ر", "ف", "ا", "ت", "ل", "ب"].map((letter, i) => (
-                                        <div key={i} className={`flex h-8 w-8 items-center justify-center rounded-md text-sm font-bold ${i === 2 || i === 4 || i === 6 ? "bg-emerald-100 text-emerald-600 ring-1 ring-emerald-200" : "bg-slate-50 text-slate-300"}`}>
-                                            {letter}
-                                        </div>
-                                    ))}
-                                </div>
-                                <div>
-                                    <Title order={5} className="font-black text-lg text-[#1a2151]">Word Square</Title>
-                                    <Text size="sm" className="text-slate-500">مربع کلمات</Text>
-                                </div>
+                            <Image
+                                src="/images/interactive/Holding a Magnifying Glass.png"
+                                alt="Timer — تایمر"
+                                fit="contain"
+                                width={1125}
+                                height={2000}
+                                className="relative mx-auto h-35 w-full object-contain"
+                            />
+                            <div className="relative">
+                                <Title order={5} className="font-black text-lg text-[#1a2151]">Word Square</Title>
+                                <Text size="sm" className="text-slate-500">مربع کلمات</Text>
                             </div>
                         </div>
 
                         {/* SMALL: Sentence Ordering */}
                         <div className="group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_30px_rgba(139,92,246,.1)] fn-card-hover hover:shadow-[0_16px_50px_rgba(139,92,246,.16)] fn-fade-up fn-delay-3">
-                            <div className="pointer-events-none absolute -left-8 -top-8 h-24 w-24 rounded-full bg-violet-50/80" />
-                            <div className="relative flex items-start justify-between">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-50 text-violet-500 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                                    <MdSortByAlpha size={28} />
-                                </div>
+                            <Image
+                                src="/images/interactive/Thinking.png"
+                                alt="Timer — تایمر"
+                                fit="contain"
+                                width={1125}
+                                height={2000}
+                                className="relative mx-auto h-35 w-full object-contain"
+                            />
+                            <div className="relative">
+                                <Title order={5} className="font-black text-base text-[#1a2151]">Sentence Unscramble</Title>
+                                <Text size="xs" className="text-slate-500 line-clamp-1">مرتب سازی جملات</Text>
                             </div>
-                            {/* mini sentence preview */}
-                            <div className="relative flex flex-wrap gap-1">
-                                {["رفت", "به", "مدرسه", "علی"].map((word, i) => (
-                                    <span key={i} className={`rounded-lg px-2 py-1 text-[10px] font-bold ${i === 3 ? "bg-violet-100 text-violet-600" : i === 0 ? "bg-violet-100 text-violet-600" : "bg-slate-50 text-slate-400"}`}>{word}</span>
-                                ))}
-                            </div>
-                            <Title order={5} className="font-black text-base text-[#1a2151]">Sorting Sentences</Title>
-                            <Text size="xs" className="text-slate-500 line-clamp-1">مرتب سازی جملات</Text>
                         </div>
 
                         {/* SMALL: Columns Matching */}
                         <div className="group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_30px_rgba(6,182,212,.1)] fn-card-hover hover:shadow-[0_16px_50px_rgba(6,182,212,.16)] fn-fade-up fn-delay-4">
-                            <div className="pointer-events-none absolute -left-8 -top-8 h-24 w-24 rounded-full bg-cyan-50/80" />
-                            <div className="relative flex items-start justify-between">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-500 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                                    <MdViewColumn size={28} />
-                                </div>
+                            <Image
+                                src="/images/interactive/Puzzle Solving.png"
+                                alt="Timer — تایمر"
+                                fit="contain"
+                                width={1125}
+                                height={2000}
+                                className="relative mx-auto h-35 w-full object-contain"
+                            />
+                            <div className="relative">
+                                <Title order={5} className="font-black text-base text-[#1a2151]">Connecting words</Title>
+                                <Text size="xs" className="text-slate-500 line-clamp-1">وصل کردن کلمات</Text>
                             </div>
-                            {/* mini columns preview */}
-                            <div className="relative flex items-center gap-2">
-                                <div className="flex flex-col gap-1.5">
-                                    <span className="rounded-lg bg-cyan-100 px-2.5 py-1 text-xs font-bold text-cyan-600">کتاب</span>
-                                    <span className="rounded-lg bg-cyan-100 px-2.5 py-1 text-xs font-bold text-cyan-600">مداد</span>
-                                </div>
-                                <div className="flex flex-col gap-1.5 text-cyan-400">
-                                    <span>←</span>
-                                    <span>←</span>
-                                </div>
-                                <div className="flex flex-col gap-1.5">
-                                    <span className="rounded-lg bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-400">قرطاسیه</span>
-                                    <span className="rounded-lg bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-400">نوشتنی</span>
-                                </div>
-                            </div>
-                            <Title order={5} className="font-black text-base text-[#1a2151]">Connecting words</Title>
-                            <Text size="xs" className="text-slate-500 line-clamp-1">وصل کردن کلمات</Text>
                         </div>
 
                         {/* WIDE: Quiz Builder */}
                         <div className="group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_30px_rgba(236,72,153,.1)] fn-card-hover hover:shadow-[0_16px_50px_rgba(236,72,153,.16)] lg:col-span-2 fn-fade-up fn-delay-4">
-                            <div className="pointer-events-none absolute -left-10 -top-10 h-28 w-28 rounded-full bg-pink-50/80" />
-                            <div className="pointer-events-none absolute -right-12 -bottom-12 h-32 w-32 rounded-full bg-purple-50/60" />
-                            <div className="relative flex items-start justify-between">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-50 text-pink-500 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                                    <MdQuiz size={28} />
-                                </div>
-                                <span className="rounded-full bg-pink-50 px-3 py-1 text-[11px] font-bold text-pink-500">سازنده</span>
-                            </div>
-                            {/* mini quiz preview */}
-                            <div className="relative flex items-center gap-4">
-                                <div className="flex-1 rounded-xl border-2 border-pink-100 bg-pink-50/50 p-3">
-                                    <Text size="xs" fw={700} className="text-pink-600">؟ سؤال نمونه</Text>
-                                    <div className="mt-2 space-y-1">
-                                        <div className="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-[10px] text-slate-400">گزینه ۱</div>
-                                        <div className="flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-600">گزینه ۲ ✓</div>
-                                    </div>
-                                </div>
-                                <div className="flex-shrink-0">
-                                    <Title order={5} className="font-black text-lg text-[#1a2151]">Quiz Maker</Title>
-                                    <Text size="sm" className="text-slate-500 mt-1">کوئیز ساز</Text>
-                                </div>
+                            <Image
+                                src="/images/interactive/A or B.png"
+                                alt="Timer — تایمر"
+                                fit="contain"
+                                width={1125}
+                                height={2000}
+                                className="relative mx-auto h-35 w-full object-contain"
+                            />
+                            <div className="relative">
+                                <Title order={5} className="font-black text-lg text-[#1a2151]">Quiz Maker</Title>
+                                <Text size="sm" className="text-slate-500 mt-1">کوئیز ساز</Text>
                             </div>
                         </div>
                     </div>
